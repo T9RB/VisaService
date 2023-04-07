@@ -1,0 +1,8 @@
+﻿namespace Api_Passport_and_Visa_Service.Model;
+
+public class PassportData
+{
+    public int id { get; set; }
+    public string series { get; set; }
+    public string number { get; set; }
+}

@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\Api_Passport_and_Visa_Service.props" />
+</Project>
