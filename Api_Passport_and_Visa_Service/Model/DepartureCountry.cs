@@ -4,7 +4,7 @@ public class DepartureCountry
 {
     public int id { get; set; }
     public DateOnly dateDeparture { get; set; }
+    public int clientId { get; set; }
     
-    public ICollection<Client> client { get; set; }
-    public ICollection<Status> status { get; set; }
+    public Client client { get; set; }
 }

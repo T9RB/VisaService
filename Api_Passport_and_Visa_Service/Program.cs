@@ -12,6 +12,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<Service>();
+builder.Services.AddControllers().AddNewtonsoftJson();
 
 var conString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<VisaDbContext>(options => options.UseNpgsql(conString));

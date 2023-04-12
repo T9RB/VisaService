@@ -10,5 +10,9 @@ public class Employee
     public string gender { get; set; }
     public string qualificationLevel { get; set; }
     
-    public ICollection<Post_List> employeePost { get; set; }
+    public int postListId { get; set; }
+    
+    public Post_List postList { get; set; }
+    
+    public ICollection<RecordAppointment> RecordAppointment { get; set; }
 }

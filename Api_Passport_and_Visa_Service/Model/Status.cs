@@ -5,4 +5,6 @@ public class Status
     public int id { get; set; }
     public string nameStatus { get; set; }
     public string reasonForRefusal { get; set; }
+    
+    public ICollection<DepartureCountry> departureCountry { get; set; }
 }

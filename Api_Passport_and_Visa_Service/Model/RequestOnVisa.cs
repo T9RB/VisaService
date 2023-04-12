@@ -8,6 +8,7 @@ public class RequestOnVisa
     public string departureGoals { get; set; }
     public DateOnly returnDate { get; set; }
     public string Country { get; set; }
+    public int clientId { get; set; }
     
-    public ICollection<Client> client { get; set; }
+    public Client client { get; set; }
 }

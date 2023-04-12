@@ -5,7 +5,7 @@ public class RecordAppointment
     public int id {get; set;}
     public DateOnly dateAppointment { get; set; }
     public string purposeOfAdmission { get; set; }
+    public int clientId { get; set; }
     
-    public ICollection<Client> client { get; set; }
-    public ICollection<Employee> employee { get; set; }
+    public Client client { get; set; }
 }

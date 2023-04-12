@@ -5,4 +5,6 @@ public class PassportData
     public int id { get; set; }
     public string series { get; set; }
     public string number { get; set; }
+    
+    public ICollection<Client> client { get; set; }
 }

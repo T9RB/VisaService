@@ -8,6 +8,7 @@ public class Visa
     public DateOnly dateEnd { get; set; }
     public string placeOfIssue { get; set; }
     public DateOnly dateOfIssue { get; set; }
+    public int clientId { get; set; }
     
-    public ICollection<Client> client { get; set; }
+    public Client client { get; set; }
 }
