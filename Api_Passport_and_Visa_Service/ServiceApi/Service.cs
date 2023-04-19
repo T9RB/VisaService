@@ -1,6 +1,6 @@
 ﻿using Api_Passport_and_Visa_Service.Model;
 using Api_Passport_and_Visa_Service.Model.ForResponse;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Api_Passport_and_Visa_Service.Service;
 
@@ -15,56 +15,39 @@ public class Service
     
      public List<ClientResponse> GetAllClients()
      {
-         var clients = _dbcontext.client.ToList();
-         var passData = _dbcontext.passportData.ToList();
-         var reg = _dbcontext.registration.ToList();
+         var clients = _dbcontext.Clients.ToList();
+         var passData = _dbcontext.Passportdata.ToList();
+         var reg = _dbcontext.Registrations.ToList();
          
          var clientsList = clients.Select(x => new ClientResponse()
          {
-             id = x.id,
-             surname = x.surname,
-             nameClient = x.nameClient,
-             middleName = x.middleName,
-             placeOfBirth = x.placeOfBirth,
-             nationaly = x.nationaly,
+             id = x.Id,
+             surname = x.Surname,
+             nameClient = x.NameClient,
+             middleName = x.MiddleName,
+             placeOfBirth = x.PlaceOfBirth,
+             nationaly = x.Nationaly,
              Birthday = x.Birthday,
-             familyStatus = x.familyStatus,
-             Citizenship = x.citizenship,
-             PassportData = passData.Select(pd => new PassportDataResponse(){id = pd.id, series = pd.series ,number = pd.number}).Where(c => c.id == x.passportDataId).ToList(),
-             Registration = reg.Select(rg => new RegistrationResponse(){ID = rg.ID, City = rg.City, Street = rg.Street, House = rg.House, Flat = rg.Flat}).Where(r => r.ID == x.registrationId).ToList()
+             familyStatus = x.FamilyStatus,
+             Citizenship = x.Cituzenship,
+             PassportData = passData.Select(pd => new PassportDataResponse(){id = pd.Id, series = pd.Series ,number = pd.Number}).Where(c => c.id == x.PassportDataId).ToList(),
+             Registration = reg.Select(rg => new RegistrationResponse(){ID = rg.Id, City = rg.City, Street = rg.Street, House = rg.House, Flat = rg.Flat}).Where(r => r.ID == x.RegistrationId).ToList()
          }).ToList();
      
          return clientsList;
      }
      
-     // public List<Employee> GetAllEmployees()
-     // {
-     //     var employees = _dbcontext.employees.ToList();
-     //     var empList = employees.Select(x => new Employee()
-     //     {
-     //         id = x.id,
-     //         surname = x.surname,
-     //         nameEmp = x.nameEmp,
-     //         middleName = x.middleName,
-     //         birthday = x.birthday,
-     //         gender = x.gender,
-     //         qualificationLevel = x.qualificationLevel,
-     //         employeePost = x.employeePost
-     //     }).ToList();
-     //
-     //     return empList;
-     // }
-     //
+     
      public List<DepartureCountryResponse> GetAllDeparture()
      {
-         var depart = _dbcontext.departureCountry.ToList();
+         var depart = _dbcontext.Departurecountries.ToList();
          var clients = GetAllClients();
      
          var depList = depart.Select(x => new DepartureCountryResponse()
          {
-             id = x.id,
-             dateDeparture = x.dateDeparture,
-             client = clients.Where(c => c.id == x.clientId).ToList()
+             id = x.Id,
+             dateDeparture = x.DateDeparture,
+             client = clients.Where(c => c.id == x.ClientId).ToList()
          }).ToList();
      
          return depList;
@@ -72,18 +55,18 @@ public class Service
      
      public List<InternationalPassportResponse> GetAllPassportsInt()
      {
-         var passport = _dbcontext.internationalPassport.ToList();
+         var passport = _dbcontext.Internationalpassports.ToList();
          var clients = GetAllClients();
      
          var passpList = passport.Select(x => new InternationalPassportResponse()
          {
-             id = x.id,
-             series = x.series,
-             number = x.number,
-             dateStart = x.dateStart,
-             dateEnd = x.dateEnd,
-             organization = x.organization,
-             clientResponse = clients.Where(c => c.id == x.clientId).ToList()
+             id = x.Id,
+             series = x.Series,
+             number = x.Number,
+             dateStart = x.DateStart,
+             dateEnd = x.DateStart,
+             organization = x.Organization,
+             clientResponse = clients.Where(c => c.id == x.ClientId).ToList()
          }).ToList();
      
          return passpList;
@@ -91,13 +74,13 @@ public class Service
      
      public List<PassportDataResponse> GetAllPassports()
      {
-         var passport = _dbcontext.passportData.ToList();
+         var passport = _dbcontext.Passportdata.ToList();
 
          var passportDataResp = passport.Select(x => new PassportDataResponse()
          {
-             id = x.id,
-             series = x.series,
-             number = x.number
+             id = x.Id,
+             series = x.Series,
+             number = x.Number
          }).ToList();
          
          return passportDataResp;
@@ -105,20 +88,56 @@ public class Service
 
      public List<RecordAppointmentResponse> GetAllRecordAppointmentResponses()
      {
-         var records = _dbcontext.recordAppointment.ToList();
+         var records = _dbcontext.Recordappointments.ToList();
          var clients = GetAllClients();
 
          var recordsList = records.Select(x => new RecordAppointmentResponse()
          {
-            id = x.id,
-            dateAppointment = x.dateAppointment,
-            purposeOfAdmission = x.purposeOfAdmission,
-            clientResponse = clients.Where(c => c.id == x.clientId).ToList()
+            id = x.Id,
+            dateAppointment = x.DateAppointment,
+            purposeOfAdmission = x.PurposeOfAdmission,
+            clientResponse = clients.Where(c => c.id == x.ClientId).ToList()
          }).ToList();
 
          return recordsList;
      }
-     
+     public ClientResponse PostClient(ClientResponse clientResponse)
+     {
+         var newClient = new Client()
+         {
+             Id = clientResponse.id,
+             Surname = clientResponse.surname,
+             NameClient = clientResponse.nameClient,
+             MiddleName = clientResponse.middleName,
+             PlaceOfBirth = clientResponse.placeOfBirth,
+             Nationaly = clientResponse.nationaly,
+             Birthday = clientResponse.Birthday,
+             FamilyStatus = clientResponse.familyStatus,
+             PassportData = clientResponse.PassportData.Select(x => new Passportdatum{Id = x.id, Series = x.series, Number = x.number}).First(),
+             Registration = clientResponse.Registration.Select(x => new Registration{Id = x.ID, City = x.City, Street = x.Street, House = x.House, Flat = x.Flat}).First(),
+             Cituzenship = clientResponse.Citizenship
+         };
+
+         var response = new ClientResponse()
+         {
+            id = newClient.Id,
+            surname = newClient.Surname,
+            nameClient = newClient.NameClient,
+            middleName = newClient.MiddleName,
+            placeOfBirth = newClient.PlaceOfBirth,
+            nationaly = newClient.Nationaly,
+            Birthday = newClient.Birthday,
+            familyStatus = newClient.FamilyStatus,
+            PassportData = new List<PassportDataResponse>(){new PassportDataResponse(){id = newClient.PassportData.Id, series = newClient.PassportData.Series, number = newClient.PassportData.Number}},
+            Registration = new List<RegistrationResponse>(){new RegistrationResponse(){ID = newClient.Registration.Id, City = newClient.Registration.City, Street = newClient.Registration.Street, House = newClient.Registration.House, Flat = newClient.Registration.Flat}},
+            Citizenship = newClient.Cituzenship
+         };
+
+         _dbcontext.Clients.Add(newClient);
+         _dbcontext.SaveChanges();
+
+         return response;
+     }
      
      
      

@@ -3,7 +3,7 @@
 public class RecordAppointmentResponse
 {
     public int id {get; set;}
-    public DateOnly dateAppointment { get; set; }
+    public DateOnly? dateAppointment { get; set; }
     public string purposeOfAdmission { get; set; }
 
     public List<ClientResponse> clientResponse { get; set; }

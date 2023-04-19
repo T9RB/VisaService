@@ -21,7 +21,7 @@ public class ControllerApiVisaApp
     {
         return _service.GetAllClients();
     }
-
+    
     [HttpGet]
     [Route("intpassports")]
     public ActionResult<List<InternationalPassportResponse>> GetIntPassports()
@@ -48,6 +48,13 @@ public class ControllerApiVisaApp
     public ActionResult<List<DepartureCountryResponse>> GetAllDepCountries()
     {
         return _service.GetAllDeparture();
+    }
+    
+    [HttpPost]
+    [Route("newclient")]
+    public ActionResult<ClientResponse> PostClient([FromBody]ClientResponse clientResponse)
+    {
+        return _service.PostClient(clientResponse);
     }
     
 }

@@ -8,10 +8,8 @@ public class ClientResponse
     public string middleName { get; set; }
     public string placeOfBirth { get; set; }
     public string nationaly { get; set; }
-    public DateOnly Birthday { get; set; }
+    public string Birthday { get; set; }
     public string familyStatus { get; set; }
-    public int passportDataId { get; set; }
-    public int registrationId { get; set; }
     public string Citizenship { get; set; }
     
     public List<PassportDataResponse> PassportData { get; set; }
