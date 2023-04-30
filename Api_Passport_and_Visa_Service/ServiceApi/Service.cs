@@ -1,6 +1,7 @@
 ﻿using Api_Passport_and_Visa_Service.Model;
 using Api_Passport_and_Visa_Service.Model.ForResponse;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Api_Passport_and_Visa_Service.Service;
 
@@ -138,7 +139,76 @@ public class Service
 
          return response;
      }
+
+     public List<PaymentForResponse> GetAllPayments()
+     {
+         var paymentsList = _dbcontext.Paymentinvoices.ToList();
+         var clients = GetAllClients();
+
+         var paymentsResponse = paymentsList.Select(x => new PaymentForResponse()
+         {
+            Id = x.Id,
+            DatePayment = x.DatePayment,
+            Price = x.Price,
+            Client = clients.Where(q => q.id == x.ClientId).ToList()
+         }).ToList();
+
+         return paymentsResponse;
+     }
+
+     public List<VisaResponse> GetAllVisa()
+     {
+         var visaList = _dbcontext.Visas.Include(x => x.Client).ToList();
+         var clientsList = GetAllClients();
+
+         var visaResponse = visaList.Select(x => new VisaResponse()
+         {
+            Id = x.Id,
+            Number = x.Number,
+            DateStart = x.DateStart,
+            DateEnd = x.DateEnd,
+            PlaceOfIssue = x.PlaceOfIssue,
+            DateOfIssue = x.DateOfIssue,
+            Client = clientsList.Where(c => c.id == x.ClientId).ToList()
+         }).ToList();
+
+         return visaResponse;
+     }
+            
+     public List<ReqVisaResponse> GetAllReqVisa()
+     {
+         var reqVisaList = _dbcontext.Requestonvisas.Include(x => x.Client).ToList();
+         var clientsList = GetAllClients();
+
+         var response = reqVisaList.Select(x => new ReqVisaResponse()
+         {
+            Id = x.Id,
+            Number = x.Number,
+            DateReq = x.DateReq,
+            DepartureGoals = x.DepartureGoals,
+            ReturnDate = x.ReturnDate,
+            Country = x.Country,
+            client = clientsList.Where(c => c.id == x.ClientId).ToList()
+         }).ToList();
+
+         return response;
+     }
      
+     public List<ReqIntPassportResponse> GetAllReqIntPassport()
+     {
+         var reqIntPassportsList = _dbcontext.Requestonintpassports.Include(x => x.Client).ToList();
+         var clientsList = GetAllClients();
+
+         var response = reqIntPassportsList.Select(x => new ReqIntPassportResponse()
+         {
+             Id = x.Id,
+             Number = x.Number,
+             DateReq = x.DateReq,
+             Client = clientsList.Where(c => c.id == x.ClientId).ToList()
+         }).ToList();
+
+         return response;
+     }
      
-     
+
 }

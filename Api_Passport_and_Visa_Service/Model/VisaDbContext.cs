@@ -15,6 +15,12 @@ public partial class VisaDbContext : DbContext
     {
     }
 
+    public virtual DbSet<Answertorecord> Answertorecords { get; set; }
+
+    public virtual DbSet<Answertoreqpassport> Answertoreqpassports { get; set; }
+
+    public virtual DbSet<Answertoreqvisa> Answertoreqvisas { get; set; }
+
     public virtual DbSet<Client> Clients { get; set; }
 
     public virtual DbSet<Departurecountry> Departurecountries { get; set; }
@@ -47,6 +53,87 @@ public partial class VisaDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Answertorecord>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("answertorecord_pkey");
+
+            entity.ToTable("answertorecord");
+
+            entity.HasIndex(e => e.Number, "answertorecord_number_key").IsUnique();
+
+            entity.HasIndex(e => e.Number, "unique_number_record").IsUnique();
+
+            entity.Property(e => e.Id)
+                .UseIdentityAlwaysColumn()
+                .HasColumnName("id");
+            entity.Property(e => e.ApplicationStatus)
+                .HasMaxLength(8)
+                .HasColumnName("application_status");
+            entity.Property(e => e.DateAnswer).HasColumnName("date_answer");
+            entity.Property(e => e.MessageToClient).HasColumnName("message_to_client");
+            entity.Property(e => e.Number).HasColumnName("number");
+            entity.Property(e => e.RecordsId).HasColumnName("records_id");
+
+            entity.HasOne(d => d.Records).WithMany(p => p.Answertorecords)
+                .HasForeignKey(d => d.RecordsId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("record_foreign_key");
+        });
+
+        modelBuilder.Entity<Answertoreqpassport>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("answertoreqpassport_pkey");
+
+            entity.ToTable("answertoreqpassport");
+
+            entity.HasIndex(e => e.Number, "answertoreqpassport_number_key").IsUnique();
+
+            entity.HasIndex(e => e.Number, "unique_number_passport").IsUnique();
+
+            entity.Property(e => e.Id)
+                .UseIdentityAlwaysColumn()
+                .HasColumnName("id");
+            entity.Property(e => e.ApplicationStatus)
+                .HasMaxLength(8)
+                .HasColumnName("application_status");
+            entity.Property(e => e.DateAnswer).HasColumnName("date_answer");
+            entity.Property(e => e.MessageToClient).HasColumnName("message_to_client");
+            entity.Property(e => e.Number).HasColumnName("number");
+            entity.Property(e => e.ReqPassportId).HasColumnName("req_passport_id");
+
+            entity.HasOne(d => d.ReqPassport).WithMany(p => p.Answertoreqpassports)
+                .HasForeignKey(d => d.ReqPassportId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("record_foreign_key");
+        });
+
+        modelBuilder.Entity<Answertoreqvisa>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("answertoreqvisa_pkey");
+
+            entity.ToTable("answertoreqvisa");
+
+            entity.HasIndex(e => e.Number, "answertoreqvisa_number_key").IsUnique();
+
+            entity.HasIndex(e => e.Number, "unique_number_visa").IsUnique();
+
+            entity.Property(e => e.Id)
+                .UseIdentityAlwaysColumn()
+                .HasColumnName("id");
+            entity.Property(e => e.ApplicationStatus)
+                .HasMaxLength(8)
+                .HasColumnName("application_status");
+            entity.Property(e => e.DateAnswer).HasColumnName("date_answer");
+            entity.Property(e => e.MessageToClient).HasColumnName("message_to_client");
+            entity.Property(e => e.Number).HasColumnName("number");
+            entity.Property(e => e.ReqVisaId).HasColumnName("req_visa_id");
+
+            entity.HasOne(d => d.ReqVisa).WithMany(p => p.Answertoreqvisas)
+                .HasForeignKey(d => d.ReqVisaId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("record_foreign_key");
+        });
+
         modelBuilder.Entity<Client>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("client_pkey");

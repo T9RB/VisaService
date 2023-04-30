@@ -13,5 +13,7 @@ public partial class Requestonintpassport
 
     public int ClientId { get; set; }
 
+    public virtual ICollection<Answertoreqpassport> Answertoreqpassports { get; } = new List<Answertoreqpassport>();
+
     public virtual Client Client { get; set; } = null!;
 }

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Api_Passport_and_Visa_Service.Model.ForResponse;
 
-namespace Api_Passport_and_Visa_Service;
-
-public partial class Requestonvisa
+public class ReqVisaResponse
 {
     public int Id { get; set; }
 
@@ -18,8 +15,6 @@ public partial class Requestonvisa
     public DateOnly? ReturnDate { get; set; }
 
     public string? Country { get; set; }
-
-    public virtual ICollection<Answertoreqvisa> Answertoreqvisas { get; } = new List<Answertoreqvisa>();
-
-    public virtual Client Client { get; set; } = null!;
+    
+    public List<ClientResponse> client { get; set; }
 }

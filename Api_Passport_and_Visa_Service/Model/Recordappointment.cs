@@ -15,6 +15,8 @@ public partial class Recordappointment
 
     public string? PurposeOfAdmission { get; set; }
 
+    public virtual ICollection<Answertorecord> Answertorecords { get; } = new List<Answertorecord>();
+
     public virtual Client Client { get; set; } = null!;
 
     public virtual Employee Employee { get; set; } = null!;
