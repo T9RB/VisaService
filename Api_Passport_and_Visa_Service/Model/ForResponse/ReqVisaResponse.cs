@@ -8,8 +8,6 @@ public class ReqVisaResponse
 
     public DateOnly? DateReq { get; set; }
 
-    public int ClientId { get; set; }
-
     public string? DepartureGoals { get; set; }
 
     public DateOnly? ReturnDate { get; set; }

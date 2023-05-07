@@ -330,7 +330,9 @@ public partial class VisaDbContext : DbContext
                 .UseIdentityAlwaysColumn()
                 .HasColumnName("id");
             entity.Property(e => e.ClientId).HasColumnName("client_id");
-            entity.Property(e => e.DateAppointment).HasColumnName("date_appointment");
+            entity.Property(e => e.DateAppointment)
+                .HasMaxLength(11)
+                .HasColumnName("date_appointment");
             entity.Property(e => e.EmployeeId).HasColumnName("employee_id");
             entity.Property(e => e.PurposeOfAdmission)
                 .HasMaxLength(100)

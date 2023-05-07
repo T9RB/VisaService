@@ -1,5 +1,4 @@
 using Api_Passport_and_Visa_Service;
-using Api_Passport_and_Visa_Service.Model;
 using Api_Passport_and_Visa_Service.Service;
 using Microsoft.EntityFrameworkCore;
 

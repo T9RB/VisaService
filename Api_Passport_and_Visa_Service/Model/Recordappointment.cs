@@ -7,7 +7,7 @@ public partial class Recordappointment
 {
     public int Id { get; set; }
 
-    public DateOnly? DateAppointment { get; set; }
+    public string? DateAppointment { get; set; }
 
     public int ClientId { get; set; }
 
