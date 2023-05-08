@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using Api_Passport_and_Visa_Service.Authentication;
 using Api_Passport_and_Visa_Service.ForRequest;
 using Api_Passport_and_Visa_Service.Model;
 using Api_Passport_and_Visa_Service.Model.ForResponse;
@@ -9,6 +10,7 @@ namespace Api_Passport_and_Visa_Service.Controllers;
 
 [ApiController]
 [Route("api/v1/visa/")]
+[ServiceFilter(typeof(ApiKeyAuthFilter))]
 public class ControllerApiVisaApp : ControllerBase
 {
     private Service.Service _service;
@@ -20,166 +22,602 @@ public class ControllerApiVisaApp : ControllerBase
     
     [HttpGet]
     [Route("clients")]
-    public ActionResult<List<ClientResponse>> GetClient()
+    public ActionResult<List<ClientResponse>> GetClients()
     {
-        return _service.GetAllClients();
+        try
+        {
+            return _service.GetAllClients();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500);
+        }
     }
     
     [HttpGet]
     [Route("int-passports")]
     public ActionResult<List<InternationalPassportResponse>> GetIntPassports()
     {
-        return _service.GetAllPassportsInt();
+        try
+        {
+            return _service.GetAllPassportsInt();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500);
+        }
     }
     
     [HttpGet]
     [Route("passports-data")]
     public ActionResult<List<PassportDataResponse>> GetAllPassportDataClients()
     {
-        return _service.GetAllPassports();
+        try
+        {
+            return _service.GetAllPassports();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500);
+        }
     }
     
     [HttpGet]
     [Route("records-appointment")]
     public ActionResult<List<RecordAppointmentResponse>> GetAllRecords()
     {
-        return _service.GetAllRecordAppointmentResponses();
+        try
+        {
+            return _service.GetAllRecordAppointmentResponses();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500);
+        }
     }
     
     [HttpGet]
     [Route("departure-country")]
     public ActionResult<List<DepartureCountryResponse>> GetAllDepCountries()
     {
-        return _service.GetAllDeparture();
+        try
+        {
+            return _service.GetAllDeparture();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500);
+        }
     }
     
     [HttpGet]
     [Route("payments")]
     public ActionResult<List<PaymentForResponse>> GetAllPayments()
     {
-        return _service.GetAllPayments();
+        try
+        {
+            return _service.GetAllPayments();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500);
+        }
     }
     
     [HttpGet]
     [Route("visa-list")]
     public ActionResult<List<VisaResponse>> GetAllVisas()
     {
-        return _service.GetAllVisa();
+        try
+        {
+            return _service.GetAllVisa();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500);
+        }
     }
     
     [HttpGet]
     [Route("req-visa")]
     public ActionResult<List<ReqVisaResponse>> GetAllReqVisa()
     {
-        return _service.GetAllReqVisa();
+        try
+        {
+            return _service.GetAllReqVisa();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500);
+        }
+        
     }
     
     [HttpGet]
     [Route("req-int-passport")]
     public ActionResult<List<ReqIntPassportResponse>> GetAllReqIntPassport()
     {
-        return _service.GetAllReqIntPassport();
+        try
+        {
+            return _service.GetAllReqIntPassport();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500);
+        }
+        
     }
     
     [HttpGet]
     [Route("rec-answ")]
     public ActionResult<List<AnswRecordResponse>> GetAllAnswersOnRecord()
     {
-        return _service.GetAllAnswerRec();
+        try
+        {
+            return _service.GetAllAnswerRec();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500);
+        }
+        
     }
     
     [HttpGet]
     [Route("passport-answ")]
     public ActionResult<List<AnswRecPassport>> GetAllAnswersOnRecPassport()
     {
-        return _service.GetAllAnswerPassport();
+        try
+        {
+            return _service.GetAllAnswerPassport();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500);
+        }
+        
     }
     
     [HttpGet]
     [Route("visa-answ")]
     public ActionResult<List<AnswRecVisa>> GetAllAnswersOnRecVisa()
     {
-        return _service.GetAllAnswerVisa();
+        try
+        {
+            return _service.GetAllAnswerVisa();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500);
+        }
+        
     }
     
     [HttpGet]
     [Route("posts")]
     public ActionResult<List<PostResponse>> GetAllPosts()
     {
-        return _service.GetAllPosts();
+        try
+        {
+            return _service.GetAllPosts();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500);
+        }
+        
     }
 
     [HttpPost]
     [Route("new-client")]
-    public IActionResult PostClient([FromBody]ClientResponse clientResponse)
+    public async Task<IActionResult> PostClient([FromBody]ClientResponse clientResponse)
     {
-        _service.PostClient(clientResponse);
-        return Ok();
+        try
+        {
+            await _service.PostClient(clientResponse);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+        
     }
     
     [HttpPost]
     [Route("new-record-appointment")]
-    public IActionResult PostRecordAppointment([FromBody]RecordAppointmentRequest recordAppointmentRequest)
+    public async Task<IActionResult> PostRecordAppointment([FromBody]RecordAppointmentRequest recordAppointmentRequest)
     {
-        _service.PostRecord(recordAppointmentRequest);
-        return Ok();
+        try
+        {
+            await _service.PostRecord(recordAppointmentRequest);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+        
     }
     
     [HttpPost]
     [Route("new-int-passport")]
-    public IActionResult PostIntPassport([FromBody]IntPassportRequest intPassportRequest)
+    public async Task<IActionResult> PostIntPassport([FromBody]IntPassportRequest intPassportRequest)
     {
-        _service.PostIntPassport(intPassportRequest);
-        return Ok();
+        try
+        {
+            await _service.PostIntPassport(intPassportRequest);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+       
     }
     
     [HttpPost]
     [Route("new-record-int-passport")]
-    public IActionResult PostIntPassportRec([FromBody]RecordIntPassportRequest recordIntPassportRequest)
+    public async Task<IActionResult> PostIntPassportRec([FromBody]RecordIntPassportRequest recordIntPassportRequest)
     {
-        _service.PostReqIntPassport(recordIntPassportRequest);
-        return Ok();
+        try
+        {
+            await _service.PostReqIntPassport(recordIntPassportRequest);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+        
     }
     
     [HttpPost]
     [Route("new-record-visa")]
-    public IActionResult PostRecVisa([FromBody]ReqVisaRequest reqVisaRequest)
+    public async Task<IActionResult> PostRecVisa([FromBody]ReqVisaRequest reqVisaRequest)
     {
-        _service.PostReqVisa(reqVisaRequest);
-        return Ok();
+        try
+        {
+            await _service.PostReqVisa(reqVisaRequest);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+        
     }
     
     [HttpPost]
     [Route("new-answer-appointment")]
-    public IActionResult PostAnswerRec([FromBody]AnswerToRecordRequest answerToRecordRequest)
+    public async Task<IActionResult> PostAnswerRec([FromBody]AnswerToRecordRequest answerToRecordRequest)
     {
-        _service.PostAnswerAppointment(answerToRecordRequest);
-        return Ok();
+        try
+        {
+            await _service.PostAnswerAppointment(answerToRecordRequest);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+        
     }
     
     [HttpPost]
     [Route("new-answer-visa")]
-    public IActionResult PostAnswerVisa([FromBody]AnswerToVisaRequest answerToRecordRequest)
+    public async Task<IActionResult> PostAnswerVisa([FromBody]AnswerToVisaRequest answerToRecordRequest)
     {
-        _service.PostAnswerReqVisa(answerToRecordRequest);
-        return Ok();
+        try
+        {
+            await _service.PostAnswerReqVisa(answerToRecordRequest);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+        
     }
     
     [HttpPost]
-    [Route("new-answer-appointment")]
-    public IActionResult PostAnswerPassport([FromBody]AnswerIntPasportRequest answerIntPasportRequest)
+    [Route("new-answer-passport-req")]
+    public async Task<IActionResult> PostAnswerPassport([FromBody]AnswerIntPasportRequest answerIntPassportRequest)
     {
-        _service.PostAnswerReqIntPassport(answerIntPasportRequest);
-        return Ok();
+        try
+        {
+            await _service.PostAnswerReqIntPassport(answerIntPassportRequest);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
     }
     
     [HttpPost]
     [Route("new-payment")]
-    public IActionResult PostPayment([FromBody]PaymentRequest paymentRequest)
-    {   
-        _service.PostPayment(paymentRequest);
-        return Ok();
+    public async Task<IActionResult> PostPayment([FromBody]PaymentRequest paymentRequest)
+    {
+        try
+        {
+            await _service.PostPayment(paymentRequest);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+        
+    }
+
+    [HttpPut]
+    [Route("put-client&id={id:int}")]
+    public async Task<IActionResult> PutClient(int id, [FromBody] ClientResponse clientResponse)
+    {
+        try
+        {
+            await _service.PutClient(id, clientResponse);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
     }
     
+    [HttpPut]
+    [Route("put-record&id={id:int}")]
+    public async Task<IActionResult> PutRecord(int id, [FromBody]RecordAppointmentRequest appointmentRequest)
+    {
+        try
+        {
+            await _service.PutRecordAppointment(id, appointmentRequest);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+    }
     
+    [HttpPut]
+    [Route("put-int-passport&id={id:int}")]
+    public async Task<IActionResult> PutIntPassport(int id, [FromBody]IntPassportRequest intPassportRequest)
+    {
+        try
+        {
+            await _service.PutIntPassport(id, intPassportRequest);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+    }
+    
+    [HttpPut]
+    [Route("put-record-int-passport&id={id:int}")]
+    public async Task<IActionResult> PutRecordIntPassport(int id, [FromBody]RecordIntPassportRequest recordIntPassportRequest)
+    {
+        try
+        {
+            await _service.PutRecordIntPassport(id, recordIntPassportRequest);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+    }
+    
+    [HttpPut]
+    [Route("put-record-visa&id={id:int}")]
+    public async Task<IActionResult> PutRecordVisa(int id, [FromBody]ReqVisaRequest reqVisaRequest)
+    {
+        try
+        {
+            await _service.PutRecordVisa(id, reqVisaRequest);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+    }
+    
+    [HttpPut]
+    [Route("put-answer-appointment&id={id:int}")]
+    public async Task<IActionResult> PutAnswerAppointment(int id, [FromBody]AnswerToRecordRequest answerToRecordRequest)
+    {
+        try
+        {
+            await _service.PutAnswerAppointment(id, answerToRecordRequest);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+    }
+    
+    [HttpPut]
+    [Route("put-answer-visa&id={id:int}")]
+    public async Task<IActionResult> PutAnswerVisa(int id, [FromBody]AnswerToVisaRequest answerToRecordRequest)
+    {
+        try
+        {
+            await _service.PutAnswerVisa(id, answerToRecordRequest);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+    }
+    
+    [HttpPut]
+    [Route("put-answer-int-passport&id={id:int}")]
+    public async Task<IActionResult> PutAnswerIntPassport(int id, [FromBody]AnswerIntPasportRequest answerIntPasportRequest)
+    {
+        try
+        {
+            await _service.PutAnswerIntPassport(id, answerIntPasportRequest);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+    }
+    
+    [HttpPut]
+    [Route("put-payment&id={id:int}")]
+    public async Task<IActionResult> PutPayment(int id, [FromBody]PaymentRequest paymentRequest)
+    {
+        try
+        {
+            await _service.PutPayment(id, paymentRequest);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+    }
+
+    [HttpDelete]
+    [Route("delete-client&id={id:int}")]
+    public async Task<IActionResult> DeleteClient(int id)
+    {
+        try
+        {
+            await _service.DeleteClient(id);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+    }
+    
+    [HttpDelete]
+    [Route("delete-record&id={id:int}")]
+    public async Task<IActionResult> DeleteRecord(int id)
+    {
+        try
+        {
+            await _service.DeleteRecordAppointment(id);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+    }
+    
+    [HttpDelete]
+    [Route("delete-int-passport&id={id:int}")]
+    public async Task<IActionResult> DeleteIntPassport(int id)
+    {
+        try
+        {
+            await _service.DeleteIntPassport(id);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+    }
+    
+    [HttpDelete]
+    [Route("delete-record-passport&id={id:int}")]
+    public async Task<IActionResult> DeleteRecordPassport(int id)
+    {
+        try
+        {
+            await _service.DeleteRecordIntPassport(id);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+    }
+    
+    [HttpDelete]
+    [Route("delete-record-visa&id={id:int}")]
+    public async Task<IActionResult> DeleteRecordVisa(int id)
+    {
+        try
+        {
+            await _service.DeleteRecordVisa(id);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+    }
+    
+    [HttpDelete]
+    [Route("delete-answer-appointment&id={id:int}")]
+    public async Task<IActionResult> DeleteAnswerAppointment(int id)
+    {
+        try
+        {
+            await _service.DeleteAnswerAppointment(id);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+    }
+    
+    [HttpDelete]
+    [Route("delete-answer-visa&id={id:int}")]
+    public async Task<IActionResult> DeleteAnswerVisa(int id)
+    {
+        try
+        {
+            await _service.DeleteAnswerVisa(id);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+    }
+    
+    [HttpDelete]
+    [Route("delete-answer-passport&id={id:int}")]
+    public async Task<IActionResult> DeleteAnswerPassport(int id)
+    {
+        try
+        {
+            await _service.DeleteAnswerPassport(id);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+    }
+    
+    [HttpDelete]
+    [Route("delete-payment&id={id:int}")]
+    public async Task<IActionResult> DeletePayment(int id)
+    {
+        try
+        {
+            await _service.DeletePayment(id);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+    }
 }

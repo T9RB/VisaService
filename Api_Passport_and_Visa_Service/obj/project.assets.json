@@ -1731,19 +1731,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Никита\\.nuget\\packages\\": {}
+    "C:\\Users\\m9kis\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Никита\\RiderProjects\\VisaService\\Api_Passport_and_Visa_Service\\Api_Passport_and_Visa_Service.csproj",
+      "projectUniqueName": "C:\\Users\\m9kis\\RiderProjects\\VisaService\\Api_Passport_and_Visa_Service\\Api_Passport_and_Visa_Service.csproj",
       "projectName": "Api_Passport_and_Visa_Service",
-      "projectPath": "C:\\Users\\Никита\\RiderProjects\\VisaService\\Api_Passport_and_Visa_Service\\Api_Passport_and_Visa_Service.csproj",
-      "packagesPath": "C:\\Users\\Никита\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Никита\\RiderProjects\\VisaService\\Api_Passport_and_Visa_Service\\obj\\",
+      "projectPath": "C:\\Users\\m9kis\\RiderProjects\\VisaService\\Api_Passport_and_Visa_Service\\Api_Passport_and_Visa_Service.csproj",
+      "packagesPath": "C:\\Users\\m9kis\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\m9kis\\RiderProjects\\VisaService\\Api_Passport_and_Visa_Service\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Никита\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\m9kis\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net7.0"
@@ -1813,7 +1813,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.203\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.202\\RuntimeIdentifierGraph.json"
       }
     }
   }

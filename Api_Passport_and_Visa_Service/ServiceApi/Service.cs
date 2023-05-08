@@ -17,7 +17,7 @@ public class Service
     
      public List<ClientResponse> GetAllClients()
      {
-         var clients = _dbcontext.Clients.ToList();
+         var clients =  _dbcontext.Clients.ToList();
          var passData = _dbcontext.Passportdata.ToList();
          var reg = _dbcontext.Registrations.ToList();
          
@@ -35,8 +35,10 @@ public class Service
              PassportData = passData.Select(pd => new PassportDataResponse(){id = pd.Id, series = pd.Series ,number = pd.Number}).Where(c => c.id == x.PassportDataId).ToList(),
              Registration = reg.Select(rg => new RegistrationResponse(){ID = rg.Id, City = rg.City, Street = rg.Street, House = rg.House, Flat = rg.Flat}).Where(r => r.ID == x.RegistrationId).ToList()
          }).ToList();
-     
-         return clientsList;
+
+         var clietnsListSorted = clientsList.OrderBy(q => q.id).ToList();
+         
+         return clietnsListSorted;
      }
      
      
@@ -257,7 +259,7 @@ public class Service
          return response;
      }
      
-     public void PostClient(ClientResponse clientResponse)
+     public async Task PostClient(ClientResponse clientResponse)
      {
          var newClient = new Client()
          {
@@ -274,11 +276,11 @@ public class Service
              Cituzenship = clientResponse.Citizenship
          };
 
-         _dbcontext.Clients.Add(newClient);
-         _dbcontext.SaveChanges();
+         await _dbcontext.Clients.AddAsync(newClient);
+         await _dbcontext.SaveChangesAsync();
      }
      
-     public void PostRecord(RecordAppointmentRequest recordAppointmentRequests)
+     public async Task PostRecord(RecordAppointmentRequest recordAppointmentRequests)
      {
          var newRecord = new Recordappointment()
          {
@@ -289,131 +291,113 @@ public class Service
              EmployeeId = recordAppointmentRequests.EmployeeId
          };
 
-         _dbcontext.Recordappointments.Add(newRecord);
-         _dbcontext.SaveChanges();
+         await _dbcontext.Recordappointments.AddAsync(newRecord);
+         await _dbcontext.SaveChangesAsync();
      }
 
-     public void PostIntPassport(IntPassportRequest intPassportRequest)
+     public async Task PostIntPassport(IntPassportRequest intPassportRequest)
      {
-         if (intPassportRequest.DateStart != null && intPassportRequest.DateEnd != null)
+         var newIntPassport = new Internationalpassport()
          {
-             var newIntPassport = new Internationalpassport()
-             {
-                 Id = intPassportRequest.Id,
-                 Series = intPassportRequest.Series,
-                 Number = intPassportRequest.Number,
-                 ClientId = intPassportRequest.ClientId,
-                 DateStart = DateOnly.Parse(intPassportRequest.DateStart),
-                 DateEnd = DateOnly.Parse(intPassportRequest.DateEnd),
-                 Organization = intPassportRequest.Organization
-             };
+             Id = intPassportRequest.Id,
+             Series = intPassportRequest.Series,
+             Number = intPassportRequest.Number,
+             ClientId = intPassportRequest.ClientId,
+             DateStart = DateOnly.Parse(intPassportRequest.DateStart),
+             DateEnd = DateOnly.Parse(intPassportRequest.DateEnd),
+             Organization = intPassportRequest.Organization
+         };
 
-             _dbcontext.Internationalpassports.Add(newIntPassport);
-         }
+         await _dbcontext.Internationalpassports.AddAsync(newIntPassport);
 
-         _dbcontext.SaveChanges();
+         await  _dbcontext.SaveChangesAsync();
      }
 
-     public void PostReqIntPassport(RecordIntPassportRequest recordIntPassportRequest)
+     public async Task PostReqIntPassport(RecordIntPassportRequest recordIntPassportRequest)
      {
-         if (recordIntPassportRequest.DateReq != null)
+         var newRecIntPassport = new Requestonintpassport()
          {
-             var newRecIntPassport = new Requestonintpassport()
-             {
-                 Id = recordIntPassportRequest.Id,
-                 Number = recordIntPassportRequest.Number,
-                 DateReq = DateOnly.Parse(recordIntPassportRequest.DateReq),
-                 ClientId = recordIntPassportRequest.ClientId
-             };
+             Id = recordIntPassportRequest.Id,
+             Number = recordIntPassportRequest.Number,
+             DateReq = DateOnly.Parse(recordIntPassportRequest.DateReq),
+             ClientId = recordIntPassportRequest.ClientId
+         };
 
-             _dbcontext.Requestonintpassports.Add(newRecIntPassport);
-         }
+         await _dbcontext.Requestonintpassports.AddAsync(newRecIntPassport);
 
-         _dbcontext.SaveChanges();
+         await _dbcontext.SaveChangesAsync();
      }
 
-     public void PostReqVisa(ReqVisaRequest reqVisaRequest)
+     public async Task PostReqVisa(ReqVisaRequest reqVisaRequest)
      {
-         if (reqVisaRequest.DateReq != null && reqVisaRequest.ReturnDate != null)
+         var newRecVisa = new Requestonvisa()
          {
-             var newRecVisa = new Requestonvisa()
-             {
-                 Id = reqVisaRequest.Id,
-                 Number = reqVisaRequest.Number,
-                 DateReq = DateOnly.Parse(reqVisaRequest.DateReq),
-                 ClientId = reqVisaRequest.ClientId,
-                 DepartureGoals = reqVisaRequest.DepartureGoals,
-                 ReturnDate = DateOnly.Parse(reqVisaRequest.ReturnDate),
-                 Country = reqVisaRequest.Country
-             };
+             Id = reqVisaRequest.Id,
+             Number = reqVisaRequest.Number,
+             DateReq = DateOnly.Parse(reqVisaRequest.DateReq),
+             ClientId = reqVisaRequest.ClientId,
+             DepartureGoals = reqVisaRequest.DepartureGoals,
+             ReturnDate = DateOnly.Parse(reqVisaRequest.ReturnDate),
+             Country = reqVisaRequest.Country
+         };
 
-             _dbcontext.Requestonvisas.Add(newRecVisa);
-         }
+         await _dbcontext.Requestonvisas.AddAsync(newRecVisa);
 
-         _dbcontext.SaveChanges();
+         await _dbcontext.SaveChangesAsync();
      }
 
-     public void PostAnswerAppointment(AnswerToRecordRequest answerToRecordRequest)
+     public async Task PostAnswerAppointment(AnswerToRecordRequest answerToRecordRequest)
      {
-         if (answerToRecordRequest.DateAnswer != null)
+         var newAnswer = new Answertorecord()
          {
-             var newAnswer = new Answertorecord()
-             {
-                 Id = answerToRecordRequest.Id,
-                 Number = answerToRecordRequest.Number,
-                 RecordsId = answerToRecordRequest.RecordsId,
-                 MessageToClient = answerToRecordRequest.MessageToClient,
-                 ApplicationStatus = answerToRecordRequest.ApplicationStatus,
-                 DateAnswer = DateOnly.Parse(answerToRecordRequest.DateAnswer)
-             };
+             Id = answerToRecordRequest.Id,
+             Number = answerToRecordRequest.Number,
+             RecordsId = answerToRecordRequest.RecordsId,
+             MessageToClient = answerToRecordRequest.MessageToClient,
+             ApplicationStatus = answerToRecordRequest.ApplicationStatus,
+             DateAnswer = DateOnly.Parse(answerToRecordRequest.DateAnswer)
+         };
 
-             _dbcontext.Answertorecords.Add(newAnswer);
-         }
-
-         _dbcontext.SaveChanges();
+         await _dbcontext.Answertorecords.AddAsync(newAnswer);
+         
+         await _dbcontext.SaveChangesAsync();
      }
 
-     public void PostAnswerReqIntPassport(AnswerIntPasportRequest answerIntPasportRequest)
+     public async Task PostAnswerReqIntPassport(AnswerIntPasportRequest answerIntPasportRequest)
      {
-         if (answerIntPasportRequest.DateAnswer != null)
+         var newAnswer = new Answertoreqpassport()
          {
-             var newAnswer = new Answertoreqpassport()
-             {
-                 Id = answerIntPasportRequest.Id,
-                 Number = answerIntPasportRequest.Number,
-                 ReqPassportId = answerIntPasportRequest.ReqPassportId,
-                 MessageToClient = answerIntPasportRequest.MessageToClient,
-                 ApplicationStatus = answerIntPasportRequest.ApplicationStatus,
-                 DateAnswer = DateOnly.Parse(answerIntPasportRequest.DateAnswer)
-             };
+             Id = answerIntPasportRequest.Id,
+             Number = answerIntPasportRequest.Number,
+             ReqPassportId = answerIntPasportRequest.ReqPassportId,
+             MessageToClient = answerIntPasportRequest.MessageToClient,
+             ApplicationStatus = answerIntPasportRequest.ApplicationStatus,
+             DateAnswer = DateOnly.Parse(answerIntPasportRequest.DateAnswer)
+         };
 
-             _dbcontext.Answertoreqpassports.Add(newAnswer);
-         }
+         await _dbcontext.Answertoreqpassports.AddAsync(newAnswer);
 
-         _dbcontext.SaveChanges();
+         await _dbcontext.SaveChangesAsync();
      }
 
-     public void PostAnswerReqVisa(AnswerToVisaRequest answerToVisaRequest)
+     public async Task PostAnswerReqVisa(AnswerToVisaRequest answerToVisaRequest)
      {
-         if (answerToVisaRequest.DateAnswer != null)
+         var newAnswer = new Answertoreqvisa()
          {
-             var newAnswer = new Answertoreqvisa()
-             {
-                 Id = answerToVisaRequest.Id,
-                 Number = answerToVisaRequest.Number,
-                 ReqVisaId = answerToVisaRequest.ReqVisaId,
-                 MessageToClient = answerToVisaRequest.MessageToClient,
-                 ApplicationStatus = answerToVisaRequest.ApplicationStatus,
-                 DateAnswer = DateOnly.Parse(answerToVisaRequest.DateAnswer),
-             };
+             Id = answerToVisaRequest.Id,
+             Number = answerToVisaRequest.Number,
+             ReqVisaId = answerToVisaRequest.ReqVisaId,
+             MessageToClient = answerToVisaRequest.MessageToClient,
+             ApplicationStatus = answerToVisaRequest.ApplicationStatus,
+             DateAnswer = DateOnly.Parse(answerToVisaRequest.DateAnswer)
+         };
 
-             _dbcontext.Answertoreqvisas.Add(newAnswer);
-         }
+         await _dbcontext.Answertoreqvisas.AddAsync(newAnswer);
 
-         _dbcontext.SaveChanges();
+         await _dbcontext.SaveChangesAsync();
      }
 
-     public void PostPayment(PaymentRequest paymentRequest)
+     public async Task PostPayment(PaymentRequest paymentRequest)
      {
          var newPayment = new Paymentinvoice()
          {
@@ -423,7 +407,203 @@ public class Service
             Price = paymentRequest.Price
          };
 
-         _dbcontext.Paymentinvoices.Add(newPayment);
-         _dbcontext.SaveChanges();
+         await _dbcontext.Paymentinvoices.AddAsync(newPayment);
+         await _dbcontext.SaveChangesAsync();
+     }
+
+     public async Task PutClient(int id, ClientResponse clientResponse)
+     {
+         var findClient = await _dbcontext.Clients.FirstOrDefaultAsync(x => x.Id == id);
+
+         findClient.Surname = clientResponse.surname;
+         findClient.NameClient = clientResponse.nameClient;
+         findClient.MiddleName = clientResponse.middleName;
+         findClient.PlaceOfBirth = clientResponse.placeOfBirth;
+         findClient.Nationaly = clientResponse.nationaly;
+         findClient.Birthday = clientResponse.Birthday;
+         findClient.FamilyStatus = clientResponse.familyStatus;
+         
+         var pData = clientResponse.PassportData
+             .Select(x => new Passportdatum {Id = x.id, Series = x.series, Number = x.number}).First();
+         findClient.PassportData = pData;
+         var reg = clientResponse.Registration.Select(x => new Registration
+             {Id = x.ID, City = x.City, Street = x.Street, House = x.House, Flat = x.Flat}).First();
+         findClient.Registration = reg;
+         findClient.Cituzenship = clientResponse.Citizenship;
+
+         await _dbcontext.SaveChangesAsync();
+     }
+
+
+     public async Task PutRecordAppointment(int id, RecordAppointmentRequest recordAppointmentRequest)
+     {
+         var findRecord = await _dbcontext.Recordappointments.FirstOrDefaultAsync(x => x.Id == id);
+
+         findRecord.DateAppointment = recordAppointmentRequest.dateAppointment;
+         findRecord.PurposeOfAdmission = recordAppointmentRequest.purposeOfAdmission;
+         findRecord.ClientId = recordAppointmentRequest.ClientId;
+         findRecord.EmployeeId = recordAppointmentRequest.EmployeeId;
+
+         await _dbcontext.SaveChangesAsync();
+     }
+
+     public async Task PutIntPassport(int id, IntPassportRequest intPassportRequest)
+     {
+         var findPassport = await _dbcontext.Internationalpassports.FirstOrDefaultAsync(x => x.Id == id);
+
+         findPassport.Series = intPassportRequest.Series;
+         findPassport.Number = intPassportRequest.Number;
+         findPassport.ClientId = intPassportRequest.ClientId;
+         findPassport.DateStart = DateOnly.Parse(intPassportRequest.DateStart);
+         findPassport.DateEnd = DateOnly.Parse(intPassportRequest.DateEnd);
+         findPassport.Organization = intPassportRequest.Organization;
+
+         await _dbcontext.SaveChangesAsync();
+     }
+
+     public async Task PutRecordIntPassport(int id, [FromBody] RecordIntPassportRequest recordIntPassportRequest)
+     {
+         var findReq = await _dbcontext.Requestonintpassports.FirstOrDefaultAsync(x => x.Id == id);
+
+         findReq.Number = recordIntPassportRequest.Number;
+         findReq.DateReq = DateOnly.Parse(recordIntPassportRequest.DateReq);
+         findReq.ClientId = recordIntPassportRequest.ClientId;
+
+         await _dbcontext.SaveChangesAsync();
+     }
+
+     public async Task PutRecordVisa(int id, [FromBody]ReqVisaRequest reqVisaRequest)
+     {
+         var findReq = await _dbcontext.Requestonvisas.FirstOrDefaultAsync(x => x.Id == id);
+
+         findReq.Number = reqVisaRequest.Number;
+         findReq.DateReq = DateOnly.Parse(reqVisaRequest.DateReq);
+         findReq.ClientId = reqVisaRequest.ClientId;
+         findReq.DepartureGoals = reqVisaRequest.DepartureGoals;
+         findReq.DepartureGoals = reqVisaRequest.DepartureGoals;
+         findReq.ReturnDate = DateOnly.Parse(reqVisaRequest.ReturnDate);
+         findReq.Country = reqVisaRequest.Country;
+
+         await _dbcontext.SaveChangesAsync();
+     }
+
+     public async Task PutAnswerAppointment(int id, [FromBody]AnswerToRecordRequest answerToRecordRequest)
+     {
+         var findReq = await _dbcontext.Answertorecords.FirstOrDefaultAsync(x => x.Id == id);
+
+         findReq.Number = answerToRecordRequest.Number;
+         findReq.RecordsId = answerToRecordRequest.RecordsId;
+         findReq.MessageToClient = answerToRecordRequest.MessageToClient;
+         findReq.ApplicationStatus = answerToRecordRequest.ApplicationStatus;
+         findReq.DateAnswer = DateOnly.Parse(answerToRecordRequest.DateAnswer);
+
+         await _dbcontext.SaveChangesAsync();
+     }
+     
+     public async Task PutAnswerVisa(int id, [FromBody]AnswerToVisaRequest answerToRecordRequest)
+     {
+         var findReq = await _dbcontext.Answertoreqvisas.FirstOrDefaultAsync(x => x.Id == id);
+
+         findReq.Number = answerToRecordRequest.Number;
+         findReq.ReqVisaId = answerToRecordRequest.ReqVisaId;
+         findReq.MessageToClient = answerToRecordRequest.MessageToClient;
+         findReq.ApplicationStatus = answerToRecordRequest.ApplicationStatus;
+         findReq.DateAnswer = DateOnly.Parse(answerToRecordRequest.DateAnswer);
+
+         await _dbcontext.SaveChangesAsync();
+     }
+     
+     public async Task PutAnswerIntPassport(int id, [FromBody]AnswerIntPasportRequest answerToRecordRequest)
+     {
+         var findReq = await _dbcontext.Answertoreqpassports.FirstOrDefaultAsync(x => x.Id == id);
+
+         findReq.Number = answerToRecordRequest.Number;
+         findReq.ReqPassportId = answerToRecordRequest.ReqPassportId;
+         findReq.MessageToClient = answerToRecordRequest.MessageToClient;
+         findReq.ApplicationStatus = answerToRecordRequest.ApplicationStatus;
+         findReq.DateAnswer = DateOnly.Parse(answerToRecordRequest.DateAnswer);
+
+         await _dbcontext.SaveChangesAsync();
+     }
+
+     public async Task PutPayment(int id, [FromBody]PaymentRequest paymentRequest)
+     {
+         var findPayment = await _dbcontext.Paymentinvoices.FirstOrDefaultAsync(x => x.Id == id);
+         
+         findPayment.DatePayment = DateOnly.Parse(paymentRequest.DatePayment);
+         findPayment.ClientId = paymentRequest.ClientId;
+         findPayment.Price = paymentRequest.Price;
+     }
+
+     public async Task DeleteClient(int id)
+     {
+         var findObject = await _dbcontext.Clients.FirstOrDefaultAsync(x => x.Id == id);
+
+         _dbcontext.Clients.Remove(findObject);
+         await _dbcontext.SaveChangesAsync();
+     }
+     
+     public async Task DeleteRecordAppointment(int id)
+     {
+         var findObject = await _dbcontext.Recordappointments.FirstOrDefaultAsync(x => x.Id == id);
+
+         _dbcontext.Recordappointments.Remove(findObject);
+         await _dbcontext.SaveChangesAsync();
+     }
+     
+     public async Task DeleteIntPassport(int id)
+     {
+         var findObject = await _dbcontext.Internationalpassports.FirstOrDefaultAsync(x => x.Id == id);
+
+         _dbcontext.Internationalpassports.Remove(findObject);
+         await _dbcontext.SaveChangesAsync();
+     }
+     
+     public async Task DeleteRecordIntPassport(int id)
+     {
+         var findObject = await _dbcontext.Requestonintpassports.FirstOrDefaultAsync(x => x.Id == id);
+
+         _dbcontext.Requestonintpassports.Remove(findObject);
+         await _dbcontext.SaveChangesAsync();
+     }
+     
+     public async Task DeleteRecordVisa(int id)
+     {
+         var findObject = await _dbcontext.Requestonvisas.FirstOrDefaultAsync(x => x.Id == id);
+
+         _dbcontext.Requestonvisas.Remove(findObject);
+         await _dbcontext.SaveChangesAsync();
+     }
+     
+     public async Task DeleteAnswerAppointment(int id)
+     {
+         var findObject = await _dbcontext.Answertorecords.FirstOrDefaultAsync(x => x.Id == id);
+
+         _dbcontext.Answertorecords.Remove(findObject);
+         await _dbcontext.SaveChangesAsync();
+     }
+     
+     public async Task DeleteAnswerVisa(int id)
+     {
+         var findObject = await _dbcontext.Answertoreqvisas.FirstOrDefaultAsync(x => x.Id == id);
+
+         _dbcontext.Answertoreqvisas.Remove(findObject);
+         await _dbcontext.SaveChangesAsync();
+     }
+     
+     public async Task DeleteAnswerPassport(int id)
+     {
+         var findObject = await _dbcontext.Answertoreqpassports.FirstOrDefaultAsync(x => x.Id == id);
+
+         _dbcontext.Answertoreqpassports.Remove(findObject);
+         await _dbcontext.SaveChangesAsync();
+     }
+     
+     public async Task DeletePayment(int id)
+     {
+         var findObject = await _dbcontext.Paymentinvoices.FirstOrDefaultAsync(x => x.Id == id);
+
+         _dbcontext.Paymentinvoices.Remove(findObject);
+         await _dbcontext.SaveChangesAsync();
      }
 }
