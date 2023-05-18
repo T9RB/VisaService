@@ -90,6 +90,27 @@ public class Service
          return passportDataResp;
      }
 
+     public async Task<bool> CheckPassportData(string series, string number)
+     {
+         if (series.Length == 4 && number.Length == 6)
+         {
+             var passportData = await _dbcontext.Passportsdatafromapis
+                 .FirstOrDefaultAsync(x => x.Number == number && x.Series == series);
+             if (passportData != null || passportData != default)
+             {
+                 return true;
+             }
+             else
+             {
+                 return false;
+             }
+         }
+         else
+         {
+             return false;
+         }
+     }
+
      public List<RecordAppointmentResponse> GetAllRecordAppointmentResponses()
      {
          var records = _dbcontext.Recordappointments.ToList();
@@ -261,23 +282,30 @@ public class Service
      
      public async Task PostClient(ClientResponse clientResponse)
      {
-         var newClient = new Client()
+         var series = clientResponse.PassportData.Select(x => x.series);
+         var number = clientResponse.PassportData.Select(x => x.number);
+         var checkPassportDataClient = await CheckPassportData(number.ToString(), series.ToString());
+         if (checkPassportDataClient)
          {
-             Id = clientResponse.id,
-             Surname = clientResponse.surname,
-             NameClient = clientResponse.nameClient,
-             MiddleName = clientResponse.middleName,
-             PlaceOfBirth = clientResponse.placeOfBirth,
-             Nationaly = clientResponse.nationaly,
-             Birthday = clientResponse.Birthday,
-             FamilyStatus = clientResponse.familyStatus,
-             PassportData = clientResponse.PassportData.Select(x => new Passportdatum{Id = x.id, Series = x.series, Number = x.number}).First(),
-             Registration = clientResponse.Registration.Select(x => new Registration{Id = x.ID, City = x.City, Street = x.Street, House = x.House, Flat = x.Flat}).First(),
-             Cituzenship = clientResponse.Citizenship
-         };
+             var newClient = new Client()
+             {
+                 Id = clientResponse.id,
+                 Surname = clientResponse.surname,
+                 NameClient = clientResponse.nameClient,
+                 MiddleName = clientResponse.middleName,
+                 PlaceOfBirth = clientResponse.placeOfBirth,
+                 Nationaly = clientResponse.nationaly,
+                 Birthday = clientResponse.Birthday,
+                 FamilyStatus = clientResponse.familyStatus,
+                 PassportData = clientResponse.PassportData.Select(x => new Passportdatum{Id = x.id, Series = x.series, Number = x.number}).First(),
+                 Registration = clientResponse.Registration.Select(x => new Registration{Id = x.ID, City = x.City, Street = x.Street, House = x.House, Flat = x.Flat}).First(),
+                 Cituzenship = clientResponse.Citizenship
+             };
 
-         await _dbcontext.Clients.AddAsync(newClient);
-         await _dbcontext.SaveChangesAsync();
+             await _dbcontext.Clients.AddAsync(newClient);
+             await _dbcontext.SaveChangesAsync();
+         }
+         
      }
      
      public async Task PostRecord(RecordAppointmentRequest recordAppointmentRequests)

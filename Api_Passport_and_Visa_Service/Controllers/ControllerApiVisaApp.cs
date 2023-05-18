@@ -162,6 +162,20 @@ public class ControllerApiVisaApp : ControllerBase
         }
         
     }
+
+    [HttpGet]
+    [Route("check-passport-data/series={series}&number={number}")]
+    public ActionResult<Task<bool>> GetCheckPassportData(string series, string number)
+    {
+        try
+        {
+            return _service.CheckPassportData(series, number);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500);
+        }
+    }
     
     [HttpGet]
     [Route("passport-answ")]
