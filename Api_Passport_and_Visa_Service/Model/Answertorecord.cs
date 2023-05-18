@@ -16,6 +16,4 @@ public partial class Answertorecord
     public string? ApplicationStatus { get; set; }
 
     public DateOnly? DateAnswer { get; set; }
-
-    public virtual Recordappointment Records { get; set; } = null!;
 }

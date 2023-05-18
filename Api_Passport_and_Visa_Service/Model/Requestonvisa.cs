@@ -18,8 +18,6 @@ public partial class Requestonvisa
     public DateOnly? ReturnDate { get; set; }
 
     public string? Country { get; set; }
-
-    public virtual ICollection<Answertoreqvisa> Answertoreqvisas { get; } = new List<Answertoreqvisa>();
-
-    public virtual Client Client { get; set; } = null!;
+    
+    public virtual Client Client { get; set; }
 }

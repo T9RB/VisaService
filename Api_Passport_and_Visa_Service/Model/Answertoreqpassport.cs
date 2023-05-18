@@ -16,6 +16,4 @@ public partial class Answertoreqpassport
     public string? ApplicationStatus { get; set; }
 
     public DateOnly? DateAnswer { get; set; }
-
-    public virtual Requestonintpassport ReqPassport { get; set; } = null!;
 }

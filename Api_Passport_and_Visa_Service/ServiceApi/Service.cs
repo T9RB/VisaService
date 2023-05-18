@@ -1,4 +1,5 @@
-﻿using Api_Passport_and_Visa_Service.ForRequest;
+﻿using Api_Passport_and_Visa_Service.Cryptografy;
+using Api_Passport_and_Visa_Service.ForRequest;
 using Api_Passport_and_Visa_Service.Model;
 using Api_Passport_and_Visa_Service.Model.ForResponse;
 using Microsoft.AspNetCore.Mvc;
@@ -9,13 +10,14 @@ namespace Api_Passport_and_Visa_Service.Service;
 public class Service
 {
     private VisaDbContext _dbcontext;
+    private CrypMethods _cryptografy;
     
     public Service(VisaDbContext context)
     {
         _dbcontext = context;
+       
     }
-    
-     public List<ClientResponse> GetAllClients()
+    public List<ClientResponse> GetAllClients()
      {
          var clients =  _dbcontext.Clients.ToList();
          var passData = _dbcontext.Passportdata.ToList();
@@ -36,9 +38,7 @@ public class Service
              Registration = reg.Select(rg => new RegistrationResponse(){ID = rg.Id, City = rg.City, Street = rg.Street, House = rg.House, Flat = rg.Flat}).Where(r => r.ID == x.RegistrationId).ToList()
          }).ToList();
 
-         var clietnsListSorted = clientsList.OrderBy(q => q.id).ToList();
-         
-         return clietnsListSorted;
+         return clientsList;
      }
      
      
@@ -90,26 +90,26 @@ public class Service
          return passportDataResp;
      }
 
-     public async Task<bool> CheckPassportData(string series, string number)
-     {
-         if (series.Length == 4 && number.Length == 6)
-         {
-             var passportData = await _dbcontext.Passportsdatafromapis
-                 .FirstOrDefaultAsync(x => x.Number == number && x.Series == series);
-             if (passportData != null || passportData != default)
-             {
-                 return true;
-             }
-             else
-             {
-                 return false;
-             }
-         }
-         else
-         {
-             return false;
-         }
-     }
+     // public async Task<bool> CheckPassportData(string series, string number)
+     // {
+     //     if (series.Length == 4 && number.Length == 6)
+     //     {
+     //         var passportData = await _dbcontext.Passportsdatafromapis
+     //             .FirstOrDefaultAsync(x => x.Number == number && x.Series == series);
+     //         if (passportData != null || passportData != default)
+     //         {
+     //             return true;
+     //         }
+     //         else
+     //         {
+     //             return false;
+     //         }
+     //     }
+     //     else
+     //     {
+     //         return false;
+     //     }
+     // }
 
      public List<RecordAppointmentResponse> GetAllRecordAppointmentResponses()
      {
@@ -279,14 +279,28 @@ public class Service
 
          return response;
      }
-     
+
+     public async Task<bool> CheckAuthorization(string login, string password)
+     {
+         var findUser = await _dbcontext.Userdata.FirstOrDefaultAsync(x => x.Login == login && x.Password == password);
+
+         if (findUser != null && findUser != default)
+         {
+             return true;
+         }
+         else
+         {
+             return false;
+         }
+     }
+
      public async Task PostClient(ClientResponse clientResponse)
      {
          var series = clientResponse.PassportData.Select(x => x.series);
          var number = clientResponse.PassportData.Select(x => x.number);
-         var checkPassportDataClient = await CheckPassportData(number.ToString(), series.ToString());
-         if (checkPassportDataClient)
-         {
+         //var checkPassportDataClient = await CheckPassportData(number.ToString(), series.ToString());
+         //if (checkPassportDataClient)
+         //{
              var newClient = new Client()
              {
                  Id = clientResponse.id,
@@ -304,7 +318,7 @@ public class Service
 
              await _dbcontext.Clients.AddAsync(newClient);
              await _dbcontext.SaveChangesAsync();
-         }
+         //}
          
      }
      
@@ -436,6 +450,20 @@ public class Service
          };
 
          await _dbcontext.Paymentinvoices.AddAsync(newPayment);
+         await _dbcontext.SaveChangesAsync();
+     }
+
+     public async Task PostUser(string login, string password)
+     {
+         string hashPassword = _cryptografy.hashPassword(password);
+
+         var newUser = new Userdatum()
+         {
+             Login = login,
+             Password = hashPassword
+         };
+
+         await _dbcontext.Userdata.AddAsync(newUser);
          await _dbcontext.SaveChangesAsync();
      }
 

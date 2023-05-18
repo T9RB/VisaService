@@ -18,6 +18,4 @@ public partial class Internationalpassport
     public DateOnly? DateEnd { get; set; }
 
     public string? Organization { get; set; }
-
-    public virtual Client Client { get; set; } = null!;
 }

@@ -12,8 +12,6 @@ public partial class Requestonintpassport
     public DateOnly? DateReq { get; set; }
 
     public int ClientId { get; set; }
-
-    public virtual ICollection<Answertoreqpassport> Answertoreqpassports { get; } = new List<Answertoreqpassport>();
-
-    public virtual Client Client { get; set; } = null!;
+    
+    public virtual Client Client { get; set; }
 }

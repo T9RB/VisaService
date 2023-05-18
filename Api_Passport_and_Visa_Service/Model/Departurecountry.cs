@@ -12,8 +12,4 @@ public partial class Departurecountry
     public int ClientId { get; set; }
 
     public int StatusId { get; set; }
-
-    public virtual Client Client { get; set; } = null!;
-
-    public virtual Status Status { get; set; } = null!;
 }

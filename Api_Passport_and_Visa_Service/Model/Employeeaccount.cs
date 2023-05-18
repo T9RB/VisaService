@@ -3,15 +3,15 @@ using System.Collections.Generic;
 
 namespace Api_Passport_and_Visa_Service;
 
-public partial class Employeesdatum
+public partial class Employeeaccount
 {
     public int Id { get; set; }
 
-    public string Login { get; set; } = null!;
+    public int? Accountid { get; set; }
 
-    public string Password { get; set; } = null!;
+    public int? Employeeid { get; set; }
 
-    public int? EmployeeId { get; set; }
+    public virtual Userdatum? Account { get; set; }
 
     public virtual Employee? Employee { get; set; }
 }

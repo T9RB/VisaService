@@ -10,6 +10,4 @@ public partial class Status
     public string? NameStatus { get; set; }
 
     public string? Reasonforrefusal { get; set; }
-
-    public virtual ICollection<Departurecountry> Departurecountries { get; } = new List<Departurecountry>();
 }

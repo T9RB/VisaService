@@ -165,17 +165,17 @@ public class ControllerApiVisaApp : ControllerBase
 
     [HttpGet]
     [Route("check-passport-data/series={series}&number={number}")]
-    public ActionResult<Task<bool>> GetCheckPassportData(string series, string number)
-    {
-        try
-        {
-            return _service.CheckPassportData(series, number);
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500);
-        }
-    }
+    // public ActionResult<Task<bool>> GetCheckPassportData(string series, string number)
+    // {
+    //     try
+    //     {
+    //         return _service.CheckPassportData(series, number);
+    //     }
+    //     catch (Exception e)
+    //     {
+    //         return StatusCode(500);
+    //     }
+    // }
     
     [HttpGet]
     [Route("passport-answ")]
@@ -220,6 +220,36 @@ public class ControllerApiVisaApp : ControllerBase
             return StatusCode(500);
         }
         
+    }
+    
+    [HttpGet]
+    [Route("check-authorization/login={login}/password={password}")]
+    public async Task<bool> CheckAuthorization(string login, string password)
+    {
+        try
+        {
+            return await _service.CheckAuthorization(login, password);
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
+        
+    }
+
+    [HttpPost]
+    [Route(("new-user/login={login}&password={password}"))]
+    public async Task<IActionResult> PostUser(string login, string password)
+    {
+        try
+        {
+            await _service.PostUser(login, password);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
     }
 
     [HttpPost]
@@ -366,7 +396,7 @@ public class ControllerApiVisaApp : ControllerBase
     }
 
     [HttpPut]
-    [Route("put-client&id={id:int}")]
+    [Route("put-client/id={id:int}")]
     public async Task<IActionResult> PutClient(int id, [FromBody] ClientResponse clientResponse)
     {
         try
@@ -381,7 +411,7 @@ public class ControllerApiVisaApp : ControllerBase
     }
     
     [HttpPut]
-    [Route("put-record&id={id:int}")]
+    [Route("put-record/id={id:int}")]
     public async Task<IActionResult> PutRecord(int id, [FromBody]RecordAppointmentRequest appointmentRequest)
     {
         try
@@ -396,7 +426,7 @@ public class ControllerApiVisaApp : ControllerBase
     }
     
     [HttpPut]
-    [Route("put-int-passport&id={id:int}")]
+    [Route("put-int-passport/id={id:int}")]
     public async Task<IActionResult> PutIntPassport(int id, [FromBody]IntPassportRequest intPassportRequest)
     {
         try

@@ -27,23 +27,7 @@ public partial class Client
 
     public string? Cituzenship { get; set; }
 
-    public virtual ICollection<Departurecountry> Departurecountries { get; } = new List<Departurecountry>();
-
-    public virtual ICollection<Internationalpassport> Internationalpassports { get; } = new List<Internationalpassport>();
-
-    public virtual Passportdatum PassportData { get; set; } = null!;
-
-    public virtual ICollection<Paymentinvoice> Paymentinvoices { get; } = new List<Paymentinvoice>();
-
-    public virtual ICollection<Recordappointment> Recordappointments { get; } = new List<Recordappointment>();
-
-    public virtual Registration Registration { get; set; } = null!;
-
-    public virtual ICollection<Requestonintpassport> Requestonintpassports { get; } = new List<Requestonintpassport>();
-
-    public virtual ICollection<Requestonvisa> Requestonvisas { get; } = new List<Requestonvisa>();
-
-    public virtual ICollection<Usersdatum> Usersdata { get; } = new List<Usersdatum>();
-
-    public virtual ICollection<Visa> Visas { get; } = new List<Visa>();
+    public virtual ICollection<Clientaccount> Clientaccounts { get; } = new List<Clientaccount>();
+    public virtual Passportdatum PassportData { get; set; } = new Passportdatum();
+    public virtual Registration Registration { get; set; } = new Registration();
 }

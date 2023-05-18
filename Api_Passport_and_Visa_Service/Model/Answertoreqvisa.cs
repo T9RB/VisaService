@@ -16,6 +16,4 @@ public partial class Answertoreqvisa
     public string? ApplicationStatus { get; set; }
 
     public DateOnly? DateAnswer { get; set; }
-
-    public virtual Requestonvisa ReqVisa { get; set; } = null!;
 }

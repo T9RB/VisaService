@@ -10,6 +10,4 @@ public partial class Passportdatum
     public string? Series { get; set; }
 
     public string? Number { get; set; }
-
-    public virtual Client? Client { get; set; }
 }

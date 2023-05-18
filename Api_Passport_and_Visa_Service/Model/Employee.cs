@@ -21,9 +21,5 @@ public partial class Employee
 
     public int PostId { get; set; }
 
-    public virtual ICollection<Employeesdatum> Employeesdata { get; } = new List<Employeesdatum>();
-
-    public virtual PostList Post { get; set; } = null!;
-
-    public virtual ICollection<Recordappointment> Recordappointments { get; } = new List<Recordappointment>();
+    public virtual Employeeaccount? Employeeaccount { get; set; }
 }

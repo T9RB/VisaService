@@ -12,6 +12,4 @@ public partial class Paymentinvoice
     public int ClientId { get; set; }
 
     public double? Price { get; set; }
-
-    public virtual Client Client { get; set; } = null!;
 }
