@@ -1,4 +1,5 @@
-﻿using Api_Passport_and_Visa_Service.ForRequest;
+﻿using Api_Passport_and_Visa_Service.Cryptografy;
+using Api_Passport_and_Visa_Service.ForRequest;
 using Api_Passport_and_Visa_Service.Model;
 using Api_Passport_and_Visa_Service.Model.ForResponse;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,7 @@ namespace Api_Passport_and_Visa_Service.Service;
 public class Service
 {
     private VisaDbContext _dbcontext;
+    private CrypMethods _cryptografy;
     
     public Service(VisaDbContext context)
     {
@@ -632,6 +634,34 @@ public class Service
          var findObject = await _dbcontext.Paymentinvoices.FirstOrDefaultAsync(x => x.Id == id);
 
          _dbcontext.Paymentinvoices.Remove(findObject);
+         await _dbcontext.SaveChangesAsync();
+     }
+
+     public async Task<bool> CheckAuthorization(string login, string password)
+     {
+         var findUser = await _dbcontext.Usersdata.FirstOrDefaultAsync(x => x.Login == login && x.Password == password);
+
+         if (findUser != null || findUser != default)
+         {
+             return true;
+         }
+         else
+         {
+             return false;
+         }
+     }
+     
+     public async Task PostUser(string login, string password)
+     {
+         string hashPassword = _cryptografy.hashPassword(password);
+
+         var newUser = new Usersdatum()
+         {
+             Login = login,
+             Password = hashPassword
+         };
+
+         await _dbcontext.Usersdata.AddAsync(newUser);
          await _dbcontext.SaveChangesAsync();
      }
 }

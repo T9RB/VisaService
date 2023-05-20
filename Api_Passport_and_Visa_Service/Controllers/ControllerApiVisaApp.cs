@@ -222,6 +222,36 @@ public class ControllerApiVisaApp : ControllerBase
         
     }
 
+    [HttpGet]
+    [Route("check-authorization/login={login}/password={password}")]
+    public async Task<bool> CheckAuthorization(string login, string password)
+    {
+        try
+        {
+            return await _service.CheckAuthorization(login, password);
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
+
+    }
+
+    [HttpPost]
+    [Route(("new-user/login={login}&password={password}"))]
+    public async Task<IActionResult> PostUser(string login, string password)
+    {
+        try
+        {
+            await _service.PostUser(login, password);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+    }
+    
     [HttpPost]
     [Route("new-client")]
     public async Task<IActionResult> PostClient([FromBody]ClientResponse clientResponse)
