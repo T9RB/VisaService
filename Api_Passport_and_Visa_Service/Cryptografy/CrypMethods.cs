@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 
 public class CrypMethods
 {
-    public string hashPassword(string password)
+    public async Task<string> hashPassword(string password)
     {
         MD5 md5 = MD5.Create();
         byte[] bytes = Encoding.ASCII.GetBytes(password);

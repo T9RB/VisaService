@@ -11,7 +11,9 @@ public partial class Usersdatum
 
     public string Password { get; set; } = null!;
 
-    public int? UserId { get; set; }
+    public virtual ICollection<Authorizationsession> Authorizationsessions { get; } = new List<Authorizationsession>();
 
-    public virtual Client? User { get; set; }
+    public virtual ICollection<Employeeaccount> Employeeaccounts { get; } = new List<Employeeaccount>();
+
+    public virtual ICollection<Usersaccount> Usersaccounts { get; } = new List<Usersaccount>();
 }

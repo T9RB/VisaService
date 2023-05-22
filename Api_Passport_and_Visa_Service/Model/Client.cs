@@ -43,7 +43,7 @@ public partial class Client
 
     public virtual ICollection<Requestonvisa> Requestonvisas { get; } = new List<Requestonvisa>();
 
-    public virtual ICollection<Usersdatum> Usersdata { get; } = new List<Usersdatum>();
+    public virtual ICollection<Usersaccount> Usersaccounts { get; } = new List<Usersaccount>();
 
     public virtual ICollection<Visa> Visas { get; } = new List<Visa>();
 }

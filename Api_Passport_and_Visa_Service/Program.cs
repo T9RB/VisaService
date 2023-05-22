@@ -4,7 +4,18 @@ using Api_Passport_and_Visa_Service.Service;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
+var  MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+        policy  =>
+        {
+            policy.WithOrigins("http://localhost:63344").AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
 
 // Add services to the container.
 
@@ -46,17 +57,12 @@ builder.Services.AddDbContext<VisaDbContext>(options => options.UseNpgsql(conStr
 
 var app = builder.Build();
 
-// using (var serviceScope = app.Services.CreateScope())
-// {
-//     var dbCon = serviceScope.ServiceProvider.GetRequiredService<VisaDbContext>();
-//     await dbCon.Database.MigrateAsync();
-// }
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseCors(MyAllowSpecificOrigins);
 }
 
 app.UseHttpsRedirection();

@@ -224,7 +224,7 @@ public class ControllerApiVisaApp : ControllerBase
 
     [HttpGet]
     [Route("check-authorization/login={login}/password={password}")]
-    public async Task<bool> CheckAuthorization(string login, string password)
+    public async Task<ActionResult<AuthorizationResponse>> CheckAuthorization(string login, string password)
     {
         try
         {
@@ -232,7 +232,7 @@ public class ControllerApiVisaApp : ControllerBase
         }
         catch (Exception e)
         {
-            return false;
+            return StatusCode(400);
         }
 
     }
@@ -394,6 +394,8 @@ public class ControllerApiVisaApp : ControllerBase
         }
         
     }
+    
+    
 
     [HttpPut]
     [Route("put-client&id={id:int}")]

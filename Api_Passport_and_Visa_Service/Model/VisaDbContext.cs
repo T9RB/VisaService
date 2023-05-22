@@ -21,11 +21,15 @@ public partial class VisaDbContext : DbContext
 
     public virtual DbSet<Answertoreqvisa> Answertoreqvisas { get; set; }
 
+    public virtual DbSet<Authorizationsession> Authorizationsessions { get; set; }
+
     public virtual DbSet<Client> Clients { get; set; }
 
     public virtual DbSet<Departurecountry> Departurecountries { get; set; }
 
     public virtual DbSet<Employee> Employees { get; set; }
+
+    public virtual DbSet<Employeeaccount> Employeeaccounts { get; set; }
 
     public virtual DbSet<Employeesdatum> Employeesdata { get; set; }
 
@@ -48,6 +52,8 @@ public partial class VisaDbContext : DbContext
     public virtual DbSet<Requestonvisa> Requestonvisas { get; set; }
 
     public virtual DbSet<Status> Statuses { get; set; }
+
+    public virtual DbSet<Usersaccount> Usersaccounts { get; set; }
 
     public virtual DbSet<Usersdatum> Usersdata { get; set; }
 
@@ -138,6 +144,29 @@ public partial class VisaDbContext : DbContext
                 .HasForeignKey(d => d.ReqVisaId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("record_foreign_key");
+        });
+
+        modelBuilder.Entity<Authorizationsession>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("authorizationsession_pkey");
+
+            entity.ToTable("authorizationsession");
+
+            entity.Property(e => e.Id)
+                .UseIdentityAlwaysColumn()
+                .HasColumnName("id");
+            entity.Property(e => e.Access).HasColumnName("access");
+            entity.Property(e => e.Accountsid).HasColumnName("accountsid");
+            entity.Property(e => e.Dateauthorization)
+                .HasMaxLength(30)
+                .HasColumnName("dateauthorization");
+            entity.Property(e => e.Status)
+                .HasMaxLength(7)
+                .HasColumnName("status");
+
+            entity.HasOne(d => d.Accounts).WithMany(p => p.Authorizationsessions)
+                .HasForeignKey(d => d.Accountsid)
+                .HasConstraintName("authorizationsession_accountsid_fkey");
         });
 
         modelBuilder.Entity<Client>(entity =>
@@ -245,6 +274,27 @@ public partial class VisaDbContext : DbContext
                 .HasConstraintName("post_foreign_key_emp");
         });
 
+        modelBuilder.Entity<Employeeaccount>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("employeeaccounts_pkey");
+
+            entity.ToTable("employeeaccounts");
+
+            entity.Property(e => e.Id)
+                .UseIdentityAlwaysColumn()
+                .HasColumnName("id");
+            entity.Property(e => e.Accountsid).HasColumnName("accountsid");
+            entity.Property(e => e.Emloyeeid).HasColumnName("emloyeeid");
+
+            entity.HasOne(d => d.Accounts).WithMany(p => p.Employeeaccounts)
+                .HasForeignKey(d => d.Accountsid)
+                .HasConstraintName("employeeaccounts_accountsid_fkey");
+
+            entity.HasOne(d => d.Emloyee).WithMany(p => p.Employeeaccounts)
+                .HasForeignKey(d => d.Emloyeeid)
+                .HasConstraintName("employeeaccounts_emloyeeid_fkey");
+        });
+
         modelBuilder.Entity<Employeesdatum>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("employeesdata_pkey");
@@ -254,17 +304,12 @@ public partial class VisaDbContext : DbContext
             entity.Property(e => e.Id)
                 .UseIdentityAlwaysColumn()
                 .HasColumnName("id");
-            entity.Property(e => e.EmployeeId).HasColumnName("employee_id");
             entity.Property(e => e.Login)
                 .HasMaxLength(255)
                 .HasColumnName("login");
             entity.Property(e => e.Password)
                 .HasMaxLength(255)
                 .HasColumnName("password");
-
-            entity.HasOne(d => d.Employee).WithMany(p => p.Employeesdata)
-                .HasForeignKey(d => d.EmployeeId)
-                .HasConstraintName("employeesdata_employee_id_fkey");
         });
 
         modelBuilder.Entity<Internationalpassport>(entity =>
@@ -479,6 +524,27 @@ public partial class VisaDbContext : DbContext
                 .HasColumnName("reasonforrefusal");
         });
 
+        modelBuilder.Entity<Usersaccount>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("usersaccounts_pkey");
+
+            entity.ToTable("usersaccounts");
+
+            entity.Property(e => e.Id)
+                .UseIdentityAlwaysColumn()
+                .HasColumnName("id");
+            entity.Property(e => e.Accountsid).HasColumnName("accountsid");
+            entity.Property(e => e.Clientid).HasColumnName("clientid");
+
+            entity.HasOne(d => d.Accounts).WithMany(p => p.Usersaccounts)
+                .HasForeignKey(d => d.Accountsid)
+                .HasConstraintName("usersaccounts_accountsid_fkey");
+
+            entity.HasOne(d => d.Client).WithMany(p => p.Usersaccounts)
+                .HasForeignKey(d => d.Clientid)
+                .HasConstraintName("usersaccounts_clientid_fkey");
+        });
+
         modelBuilder.Entity<Usersdatum>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("usersdata_pkey");
@@ -494,11 +560,6 @@ public partial class VisaDbContext : DbContext
             entity.Property(e => e.Password)
                 .HasMaxLength(255)
                 .HasColumnName("password");
-            entity.Property(e => e.UserId).HasColumnName("user_id");
-
-            entity.HasOne(d => d.User).WithMany(p => p.Usersdata)
-                .HasForeignKey(d => d.UserId)
-                .HasConstraintName("usersdata_user_id_fkey");
         });
 
         modelBuilder.Entity<Visa>(entity =>

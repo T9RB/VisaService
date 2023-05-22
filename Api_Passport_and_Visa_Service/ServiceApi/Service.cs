@@ -1,4 +1,6 @@
-﻿using Api_Passport_and_Visa_Service.Cryptografy;
+﻿using System.Security.Cryptography;
+using System.Text;
+using Api_Passport_and_Visa_Service.Cryptografy;
 using Api_Passport_and_Visa_Service.ForRequest;
 using Api_Passport_and_Visa_Service.Model;
 using Api_Passport_and_Visa_Service.Model.ForResponse;
@@ -10,12 +12,17 @@ namespace Api_Passport_and_Visa_Service.Service;
 public class Service
 {
     private VisaDbContext _dbcontext;
-    private CrypMethods _cryptografy;
+    /*private CrypMethods _cryptografy;*/
     
     public Service(VisaDbContext context)
-    {
+    { 
         _dbcontext = context;
     }
+
+    /*public Service(CrypMethods crypMethods)
+    {
+        _cryptografy = crypMethods;
+    }*/
     
      public List<ClientResponse> GetAllClients()
      {
@@ -637,23 +644,34 @@ public class Service
          await _dbcontext.SaveChangesAsync();
      }
 
-     public async Task<bool> CheckAuthorization(string login, string password)
+     public async Task<AuthorizationResponse> CheckAuthorization(string login, string password)
      {
-         var findUser = await _dbcontext.Usersdata.FirstOrDefaultAsync(x => x.Login == login && x.Password == password);
+         var hashPassword = await HashPassword(password);
+         var findUser = await _dbcontext.Usersdata.FirstOrDefaultAsync(x => x.Login == login && x.Password == hashPassword);
+         
+
 
          if (findUser != null || findUser != default)
          {
-             return true;
+             string status = "Success";
+             AuthorizationResponse authorizationResponse = new AuthorizationResponse(){dateAuthorization = DateTime.Today, status = status, access = true, accountID = findUser.Id};
+             var session = new Authorizationsession() { Dateauthorization = DateTime.Today.ToString(), Status = status, Access = true, Accountsid = findUser.Id};
+             await _dbcontext.Authorizationsessions.AddAsync(session);
+             await _dbcontext.SaveChangesAsync();
+             
+             return authorizationResponse;
          }
          else
          {
-             return false;
+             string status = "Error";
+             AuthorizationResponse authorizationResponse = new AuthorizationResponse(){dateAuthorization = DateTime.Now, status = status, access = false, accountID = 0};
+             return authorizationResponse;
          }
      }
      
      public async Task PostUser(string login, string password)
      {
-         string hashPassword = _cryptografy.hashPassword(password);
+         string hashPassword = await HashPassword(password);
 
          var newUser = new Usersdatum()
          {
@@ -663,5 +681,96 @@ public class Service
 
          await _dbcontext.Usersdata.AddAsync(newUser);
          await _dbcontext.SaveChangesAsync();
+     }
+     public async Task<string> HashPassword(string password)
+     {
+         MD5 md5 = MD5.Create();
+         byte[] bytes = Encoding.ASCII.GetBytes(password);
+             
+         byte[] hash = md5.ComputeHash(bytes);
+             
+         StringBuilder stringBuilder = new StringBuilder();
+         foreach (var hashByte in hash)
+         {
+             stringBuilder.Append(hashByte.ToString("X2"));
+         }
+
+         return Convert.ToString(stringBuilder);
+         
+         /*bool checkSecondary = await SecondaryTest(password);
+         if (checkSecondary)
+         {
+             MD5 md5 = MD5.Create();
+             byte[] bytes = Encoding.ASCII.GetBytes(password);
+             
+             int sizeSalt = await GenerateSizeSalt(bytes.Length);
+             var salt = await GenerateSalt(sizeSalt);
+             
+             byte[] hash = md5.ComputeHash(bytes);
+
+
+             StringBuilder stringBuilder = new StringBuilder();
+             foreach (var hashByte in hash)
+             {
+                 stringBuilder.Append(hashByte.ToString("X2"));
+             }
+
+             return Convert.ToString(stringBuilder + salt);
+         }
+         else
+         {
+             MD5 md5 = MD5.Create();
+             byte[] bytes = Encoding.ASCII.GetBytes(password);
+             
+             byte[] hash = md5.ComputeHash(bytes);
+             
+             StringBuilder stringBuilder = new StringBuilder();
+             foreach (var hashByte in hash)
+             {
+                 stringBuilder.Append(hashByte.ToString("X2"));
+             }
+
+             return Convert.ToString(stringBuilder);
+         }*/
+     }
+     
+     public async Task<string> GenerateSalt(int size)
+     {
+         var salt = new byte[size];
+         using (var rng = new RNGCryptoServiceProvider())
+         {
+             rng.GetBytes(salt);
+         }
+         
+         StringBuilder stringBuilder = new StringBuilder();
+         foreach (var hashByte in salt)
+         {
+             stringBuilder.Append(hashByte.ToString("X2"));
+         }
+         return Convert.ToString(stringBuilder);
+     }
+
+     public async Task<int> GenerateSizeSalt(int number)
+     {
+         Random rnd = new Random();
+         int randomSize = rnd.Next(number);
+
+         return randomSize;
+     }
+
+     public async Task<bool> SecondaryTest(string password)
+     {
+         var hashPassword = await HashPassword(password);
+
+         var findPassword =  _dbcontext.Usersdata.Where(x => x.Password == hashPassword).ToList();
+
+         if (findPassword.Count > 1)
+         {
+             return true;
+         }
+         else
+         {
+             return false;
+         }
      }
 }

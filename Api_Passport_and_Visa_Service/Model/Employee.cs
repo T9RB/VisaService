@@ -21,7 +21,7 @@ public partial class Employee
 
     public int PostId { get; set; }
 
-    public virtual ICollection<Employeesdatum> Employeesdata { get; } = new List<Employeesdatum>();
+    public virtual ICollection<Employeeaccount> Employeeaccounts { get; } = new List<Employeeaccount>();
 
     public virtual PostList Post { get; set; } = null!;
 
