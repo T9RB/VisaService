@@ -12,23 +12,17 @@ namespace Api_Passport_and_Visa_Service.Service;
 public class Service
 {
     private VisaDbContext _dbcontext;
-    /*private CrypMethods _cryptografy;*/
-    
+  
     public Service(VisaDbContext context)
     { 
         _dbcontext = context;
     }
-
-    /*public Service(CrypMethods crypMethods)
-    {
-        _cryptografy = crypMethods;
-    }*/
     
-     public List<ClientResponse> GetAllClients()
+     public async Task<List<ClientResponse>> GetAllClients()
      {
-         var clients =  _dbcontext.Clients.ToList();
-         var passData = _dbcontext.Passportdata.ToList();
-         var reg = _dbcontext.Registrations.ToList();
+         var clients =  await _dbcontext.Clients.ToListAsync();
+         var passData = await _dbcontext.Passportdata.ToListAsync();
+         var reg = await _dbcontext.Registrations.ToListAsync();
          
          var clientsList = clients.Select(x => new ClientResponse()
          {
@@ -51,10 +45,10 @@ public class Service
      }
      
      
-     public List<DepartureCountryResponse> GetAllDeparture()
+     public async  Task<List<DepartureCountryResponse>> GetAllDeparture()
      {
          var depart = _dbcontext.Departurecountries.ToList();
-         var clients = GetAllClients();
+         var clients = await GetAllClients();
      
          var depList = depart.Select(x => new DepartureCountryResponse()
          {
@@ -66,10 +60,10 @@ public class Service
          return depList;
      }
      
-     public List<InternationalPassportResponse> GetAllPassportsInt()
+     public async Task<List<InternationalPassportResponse>> GetAllPassportsInt()
      {
          var passport = _dbcontext.Internationalpassports.ToList();
-         var clients = GetAllClients();
+         var clients = await GetAllClients();
      
          var passpList = passport.Select(x => new InternationalPassportResponse()
          {
@@ -85,9 +79,9 @@ public class Service
          return passpList;
      }
      
-     public List<PassportDataResponse> GetAllPassports()
+     public async Task<List<PassportDataResponse>> GetAllPassports()
      {
-         var passport = _dbcontext.Passportdata.ToList();
+         var passport = await _dbcontext.Passportdata.ToListAsync();
 
          var passportDataResp = passport.Select(x => new PassportDataResponse()
          {
@@ -120,12 +114,12 @@ public class Service
          }
      }
 
-     public List<RecordAppointmentResponse> GetAllRecordAppointmentResponses()
+     public async Task<List<RecordAppointmentResponse>> GetAllRecordAppointmentResponses()
      {
-         var records = _dbcontext.Recordappointments.ToList();
-         var employee = _dbcontext.Employees.ToList();
-         var clients = GetAllClients();
-         var post = GetAllPosts();
+         var records = await _dbcontext.Recordappointments.ToListAsync();
+         var employee = await _dbcontext.Employees.ToListAsync();
+         var clients = await GetAllClients();
+         var post = await GetAllPosts();
 
          var recordsList = records.Select(x => new RecordAppointmentResponse()
          {
@@ -151,10 +145,10 @@ public class Service
          return recordsList;
      }
 
-     public List<PaymentForResponse> GetAllPayments()
+     public async Task<List<PaymentForResponse>> GetAllPayments()
      {
-         var paymentsList = _dbcontext.Paymentinvoices.ToList();
-         var clients = GetAllClients();
+         var paymentsList = await _dbcontext.Paymentinvoices.ToListAsync();
+         var clients = await GetAllClients();
 
          var paymentsResponse = paymentsList.Select(x => new PaymentForResponse()
          {
@@ -167,10 +161,10 @@ public class Service
          return paymentsResponse;
      }
 
-     public List<VisaResponse> GetAllVisa()
+     public async Task<List<VisaResponse>> GetAllVisa()
      {
-         var visaList = _dbcontext.Visas.Include(x => x.Client).ToList();
-         var clientsList = GetAllClients();
+         var visaList = await _dbcontext.Visas.Include(x => x.Client).ToListAsync();
+         var clientsList = await GetAllClients();
 
          var visaResponse = visaList.Select(x => new VisaResponse()
          {
@@ -186,10 +180,10 @@ public class Service
          return visaResponse;
      }
             
-     public List<ReqVisaResponse> GetAllReqVisa()
+     public async Task<List<ReqVisaResponse>> GetAllReqVisa()
      {
-         var reqVisaList = _dbcontext.Requestonvisas.Include(x => x.Client).ToList();
-         var clientsList = GetAllClients();
+         var reqVisaList = await _dbcontext.Requestonvisas.Include(x => x.Client).ToListAsync();
+         var clientsList = await GetAllClients();
 
          var response = reqVisaList.Select(x => new ReqVisaResponse()
          {
@@ -205,10 +199,10 @@ public class Service
          return response;
      }
 
-     public List<AnswRecordResponse> GetAllAnswerRec()
+     public async Task<List<AnswRecordResponse>> GetAllAnswerRec()
      {
-         var listAnsw = _dbcontext.Answertorecords.ToList();
-         var recordList = GetAllRecordAppointmentResponses();
+         var listAnsw = await _dbcontext.Answertorecords.ToListAsync();
+         var recordList = await GetAllRecordAppointmentResponses();
 
          var response = listAnsw.Select(x => new AnswRecordResponse()
          {
@@ -223,10 +217,10 @@ public class Service
          return response;
      }
      
-     public List<AnswRecPassport> GetAllAnswerPassport()
+     public async Task<List<AnswRecPassport>> GetAllAnswerPassport()
      {
-         var listAnsw = _dbcontext.Answertoreqpassports.ToList();
-         var recordList = GetAllReqIntPassport();
+         var listAnsw = await _dbcontext.Answertoreqpassports.ToListAsync();
+         var recordList = await GetAllReqIntPassport();
 
          var response = listAnsw.Select(x => new AnswRecPassport()
          {
@@ -241,10 +235,10 @@ public class Service
          return response;
      }
      
-     public List<AnswRecVisa> GetAllAnswerVisa()
+     public async Task<List<AnswRecVisa>> GetAllAnswerVisa()
      {
-         var listAnsw = _dbcontext.Answertoreqvisas.ToList();
-         var recordList = GetAllReqVisa();
+         var listAnsw = await _dbcontext.Answertoreqvisas.ToListAsync();
+         var recordList = await GetAllReqVisa();
 
          var response = listAnsw.Select(x => new AnswRecVisa()
          {
@@ -259,10 +253,10 @@ public class Service
          return response;
      }
 
-     public List<ReqIntPassportResponse> GetAllReqIntPassport()
+     public async Task<List<ReqIntPassportResponse>> GetAllReqIntPassport()
      {
-         var reqIntPassportsList = _dbcontext.Requestonintpassports.Include(x => x.Client).ToList();
-         var clientsList = GetAllClients();
+         var reqIntPassportsList = await _dbcontext.Requestonintpassports.Include(x => x.Client).ToListAsync();
+         var clientsList = await GetAllClients();
 
          var response = reqIntPassportsList.Select(x => new ReqIntPassportResponse()
          {
@@ -275,9 +269,9 @@ public class Service
          return response;
      }
 
-     public List<PostResponse> GetAllPosts()
+     public async Task<List<PostResponse>> GetAllPosts()
      {
-         var postList = _dbcontext.PostLists.ToList();
+         var postList = await _dbcontext.PostLists.ToListAsync();
 
          var response = postList.Select(x => new PostResponse()
          {
@@ -744,7 +738,7 @@ public class Service
          }*/
      }
      
-     public async Task<string> GenerateSalt(int size)
+     /*public async Task<string> GenerateSalt(int size)
      {
          var salt = new byte[size];
          using (var rng = new RNGCryptoServiceProvider())
@@ -758,7 +752,7 @@ public class Service
              stringBuilder.Append(hashByte.ToString("X2"));
          }
          return Convert.ToString(stringBuilder);
-     }
+     }*/
 
      /*public async Task<int> GenerateSizeSalt(int number)
      {

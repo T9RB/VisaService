@@ -23,11 +23,11 @@ public class ControllerApiVisaApp : ControllerBase
     
     [HttpGet]
     [Route("clients")]
-    public ActionResult<List<ClientResponse>> GetClients()
+    public async Task<ActionResult<List<ClientResponse>>> GetClients()
     {
         try
         {
-            return _service.GetAllClients();
+            return await _service.GetAllClients();
         }
         catch (Exception e)
         {
@@ -37,11 +37,11 @@ public class ControllerApiVisaApp : ControllerBase
     
     [HttpGet]
     [Route("int-passports")]
-    public ActionResult<List<InternationalPassportResponse>> GetIntPassports()
+    public async Task<ActionResult<List<InternationalPassportResponse>>> GetIntPassports()
     {
         try
         {
-            return _service.GetAllPassportsInt();
+            return await _service.GetAllPassportsInt();
         }
         catch (Exception e)
         {
@@ -51,11 +51,11 @@ public class ControllerApiVisaApp : ControllerBase
     
     [HttpGet]
     [Route("passports-data")]
-    public ActionResult<List<PassportDataResponse>> GetAllPassportDataClients()
+    public async Task<ActionResult<List<PassportDataResponse>>> GetAllPassportDataClients()
     {
         try
         {
-            return _service.GetAllPassports();
+            return await _service.GetAllPassports();
         }
         catch (Exception e)
         {
@@ -65,11 +65,11 @@ public class ControllerApiVisaApp : ControllerBase
     
     [HttpGet]
     [Route("records-appointment")]
-    public ActionResult<List<RecordAppointmentResponse>> GetAllRecords()
+    public async Task<ActionResult<List<RecordAppointmentResponse>>> GetAllRecords()
     {
         try
         {
-            return _service.GetAllRecordAppointmentResponses();
+            return await _service.GetAllRecordAppointmentResponses();
         }
         catch (Exception e)
         {
@@ -79,11 +79,11 @@ public class ControllerApiVisaApp : ControllerBase
     
     [HttpGet]
     [Route("departure-country")]
-    public ActionResult<List<DepartureCountryResponse>> GetAllDepCountries()
+    public async Task<ActionResult<List<DepartureCountryResponse>>> GetAllDepCountries()
     {
         try
         {
-            return _service.GetAllDeparture();
+            return await _service.GetAllDeparture();
         }
         catch (Exception e)
         {
@@ -93,11 +93,11 @@ public class ControllerApiVisaApp : ControllerBase
     
     [HttpGet]
     [Route("payments")]
-    public ActionResult<List<PaymentForResponse>> GetAllPayments()
+    public async Task<ActionResult<List<PaymentForResponse>>> GetAllPayments()
     {
         try
         {
-            return _service.GetAllPayments();
+            return await _service.GetAllPayments();
         }
         catch (Exception e)
         {
@@ -107,11 +107,11 @@ public class ControllerApiVisaApp : ControllerBase
     
     [HttpGet]
     [Route("visa-list")]
-    public ActionResult<List<VisaResponse>> GetAllVisas()
+    public async Task<ActionResult<List<VisaResponse>>> GetAllVisas()
     {
         try
         {
-            return _service.GetAllVisa();
+            return await _service.GetAllVisa();
         }
         catch (Exception e)
         {
@@ -121,11 +121,11 @@ public class ControllerApiVisaApp : ControllerBase
     
     [HttpGet]
     [Route("req-visa")]
-    public ActionResult<List<ReqVisaResponse>> GetAllReqVisa()
+    public async Task<ActionResult<List<ReqVisaResponse>>> GetAllReqVisa()
     {
         try
         {
-            return _service.GetAllReqVisa();
+            return await _service.GetAllReqVisa();
         }
         catch (Exception e)
         {
@@ -136,11 +136,11 @@ public class ControllerApiVisaApp : ControllerBase
     
     [HttpGet]
     [Route("req-int-passport")]
-    public ActionResult<List<ReqIntPassportResponse>> GetAllReqIntPassport()
+    public async Task<ActionResult<List<ReqIntPassportResponse>>> GetAllReqIntPassport()
     {
         try
         {
-            return _service.GetAllReqIntPassport();
+            return await _service.GetAllReqIntPassport();
         }
         catch (Exception e)
         {
@@ -151,11 +151,11 @@ public class ControllerApiVisaApp : ControllerBase
     
     [HttpGet]
     [Route("rec-answ")]
-    public ActionResult<List<AnswRecordResponse>> GetAllAnswersOnRecord()
+    public async Task<ActionResult<List<AnswRecordResponse>>> GetAllAnswersOnRecord()
     {
         try
         {
-            return _service.GetAllAnswerRec();
+            return await _service.GetAllAnswerRec();
         }
         catch (Exception e)
         {
@@ -166,11 +166,11 @@ public class ControllerApiVisaApp : ControllerBase
 
     [HttpGet]
     [Route("check-passport-data/series={series}&number={number}")]
-    public ActionResult<Task<bool>> GetCheckPassportData(string series, string number)
+    public async Task<ActionResult<bool>> GetCheckPassportData(string series, string number)
     {
         try
         {
-            return _service.CheckPassportData(series, number);
+            return await _service.CheckPassportData(series, number);
         }
         catch (Exception e)
         {
@@ -180,11 +180,11 @@ public class ControllerApiVisaApp : ControllerBase
     
     [HttpGet]
     [Route("passport-answ")]
-    public ActionResult<List<AnswRecPassport>> GetAllAnswersOnRecPassport()
+    public async Task<ActionResult<List<AnswRecPassport>>> GetAllAnswersOnRecPassport()
     {
         try
         {
-            return _service.GetAllAnswerPassport();
+            return await _service.GetAllAnswerPassport();
         }
         catch (Exception e)
         {
@@ -195,11 +195,11 @@ public class ControllerApiVisaApp : ControllerBase
     
     [HttpGet]
     [Route("visa-answ")]
-    public ActionResult<List<AnswRecVisa>> GetAllAnswersOnRecVisa()
+    public async Task<ActionResult<List<AnswRecVisa>>> GetAllAnswersOnRecVisa()
     {
         try
         {
-            return _service.GetAllAnswerVisa();
+            return await _service.GetAllAnswerVisa();
         }
         catch (Exception e)
         {
@@ -210,11 +210,11 @@ public class ControllerApiVisaApp : ControllerBase
     
     [HttpGet]
     [Route("posts")]
-    public ActionResult<List<PostResponse>> GetAllPosts()
+    public async Task<ActionResult<List<PostResponse>>> GetAllPosts()
     {
         try
         {
-            return _service.GetAllPosts();
+            return await _service.GetAllPosts();
         }
         catch (Exception e)
         {
@@ -229,7 +229,6 @@ public class ControllerApiVisaApp : ControllerBase
     {
         try
         {
-            /*HttpContext.Response.Cookies.Append("userID", "1");*/
             return await _service.CheckAuthorization(login, password);
         }
         catch (Exception e)
