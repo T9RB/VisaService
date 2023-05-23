@@ -3,6 +3,7 @@ using Api_Passport_and_Visa_Service.Authentication;
 using Api_Passport_and_Visa_Service.ForRequest;
 using Api_Passport_and_Visa_Service.Model;
 using Api_Passport_and_Visa_Service.Model.ForResponse;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -228,6 +229,7 @@ public class ControllerApiVisaApp : ControllerBase
     {
         try
         {
+            /*HttpContext.Response.Cookies.Append("userID", "1");*/
             return await _service.CheckAuthorization(login, password);
         }
         catch (Exception e)
@@ -253,12 +255,12 @@ public class ControllerApiVisaApp : ControllerBase
     }
     
     [HttpPost]
-    [Route("new-client")]
-    public async Task<IActionResult> PostClient([FromBody]ClientResponse clientResponse)
+    [Route("new-client/number-user={number:int}")]
+    public async Task<IActionResult> PostClient([FromBody]ClientResponse clientResponse, int number)
     {
         try
         {
-            await _service.PostClient(clientResponse);
+            await _service.PostClient(clientResponse, number);
             return Ok();
         }
         catch (Exception e)

@@ -4,17 +4,26 @@ using Api_Passport_and_Visa_Service.Service;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
-var  MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+var  myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: MyAllowSpecificOrigins,
+    options.AddPolicy(name: myAllowSpecificOrigins,
         policy  =>
         {
-            policy.WithOrigins("http://localhost:63344").AllowAnyHeader()
+            policy.WithOrigins("http://localhost:63343").AllowAnyHeader()
                 .AllowAnyMethod();
         });
+});
+
+builder.Services.AddDistributedMemoryCache();
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromSeconds(3600);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
 });
 
 // Add services to the container.
@@ -51,6 +60,7 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddScoped<Service>();
 builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddScoped<ApiKeyAuthFilter>();
+builder.Services.AddAuthentication().AddCookie();
 
 var conString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<VisaDbContext>(options => options.UseNpgsql(conString));
@@ -62,12 +72,14 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.UseCors(MyAllowSpecificOrigins);
+    app.UseCors(myAllowSpecificOrigins);
 }
 
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseSession();
 
 app.MapControllers();
 

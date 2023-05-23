@@ -289,7 +289,7 @@ public class Service
          return response;
      }
      
-     public async Task PostClient(ClientResponse clientResponse)
+     public async Task PostClient(ClientResponse clientResponse, int idAccount)
      {
          var series = clientResponse.PassportData.Select(x => x.series);
          var number = clientResponse.PassportData.Select(x => x.number);
@@ -313,6 +313,8 @@ public class Service
 
              await _dbcontext.Clients.AddAsync(newClient);
              await _dbcontext.SaveChangesAsync();
+             
+             
          }
          
      }
@@ -658,7 +660,6 @@ public class Service
              var session = new Authorizationsession() { Dateauthorization = DateTime.Today.ToString(), Status = status, Access = true, Accountsid = findUser.Id};
              await _dbcontext.Authorizationsessions.AddAsync(session);
              await _dbcontext.SaveChangesAsync();
-             
              return authorizationResponse;
          }
          else
@@ -672,15 +673,24 @@ public class Service
      public async Task PostUser(string login, string password)
      {
          string hashPassword = await HashPassword(password);
-
+         string status = "Success";
+         
          var newUser = new Usersdatum()
          {
              Login = login,
              Password = hashPassword
          };
-
+         
          await _dbcontext.Usersdata.AddAsync(newUser);
          await _dbcontext.SaveChangesAsync();
+         
+         var findUser = _dbcontext.Usersdata.FirstOrDefaultAsync(x => x.Login == login && x.Password == hashPassword);
+         if (findUser != null || findUser != default)
+         {
+             var session = new Authorizationsession() { Dateauthorization = DateTime.Today.ToString(), Status = status, Access = true, Accountsid = findUser.Id};
+             await _dbcontext.Authorizationsessions.AddAsync(session);
+             await _dbcontext.SaveChangesAsync();
+         }
      }
      public async Task<string> HashPassword(string password)
      {
@@ -750,7 +760,7 @@ public class Service
          return Convert.ToString(stringBuilder);
      }
 
-     public async Task<int> GenerateSizeSalt(int number)
+     /*public async Task<int> GenerateSizeSalt(int number)
      {
          Random rnd = new Random();
          int randomSize = rnd.Next(number);
@@ -772,5 +782,5 @@ public class Service
          {
              return false;
          }
-     }
+     }*/
 }
