@@ -1,4 +1,7 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Api_Passport_and_Visa_Service.Authentication;
 using Api_Passport_and_Visa_Service.ForRequest;
 using Api_Passport_and_Visa_Service.Model;
@@ -34,7 +37,21 @@ public class ControllerApiVisaApp : ControllerBase
             return StatusCode(500);
         }
     }
-    
+
+    [HttpGet]
+    [Route("client/id={clientID:int}")]
+    public async Task<ActionResult<ClientResponse>> GetClient(int clientID)
+    {
+        try
+        {
+            return await _service.GetClient(clientID);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(400);
+        }
+    }
+
     [HttpGet]
     [Route("int-passports")]
     public async Task<ActionResult<List<InternationalPassportResponse>>> GetIntPassports()
@@ -42,6 +59,20 @@ public class ControllerApiVisaApp : ControllerBase
         try
         {
             return await _service.GetAllPassportsInt();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500);
+        }
+    }
+    
+    [HttpGet]
+    [Route("int-passport/id={id:int}")]
+    public async Task<ActionResult<InternationalPassportResponse>> GetIntPassport(int id)
+    {
+        try
+        {
+            return await _service.GetPassportsInt(id);
         }
         catch (Exception e)
         {
@@ -77,7 +108,7 @@ public class ControllerApiVisaApp : ControllerBase
         }
     }
     
-    [HttpGet]
+    /*[HttpGet]
     [Route("departure-country")]
     public async Task<ActionResult<List<DepartureCountryResponse>>> GetAllDepCountries()
     {
@@ -89,7 +120,7 @@ public class ControllerApiVisaApp : ControllerBase
         {
             return StatusCode(500);
         }
-    }
+    }*/
     
     [HttpGet]
     [Route("payments")]
@@ -112,6 +143,20 @@ public class ControllerApiVisaApp : ControllerBase
         try
         {
             return await _service.GetAllVisa();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500);
+        }
+    }
+    
+    [HttpGet]
+    [Route("get-visa/id={id:int}")]
+    public async Task<ActionResult<VisaResponse>> GetVisa(int id)
+    {
+        try
+        {
+            return await _service.GetVisa(id);
         }
         catch (Exception e)
         {
@@ -255,12 +300,11 @@ public class ControllerApiVisaApp : ControllerBase
     
     [HttpPost]
     [Route("new-client/number-user={number:int}")]
-    public async Task<IActionResult> PostClient([FromBody]ClientResponse clientResponse, int number)
+    public async Task<ActionResult<int>> PostClient([FromBody]ClientResponse clientResponse, int number)
     {
         try
         {
-            await _service.PostClient(clientResponse, number);
-            return Ok();
+            return await _service.PostClient(clientResponse, number);
         }
         catch (Exception e)
         {

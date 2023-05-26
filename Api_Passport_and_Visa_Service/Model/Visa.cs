@@ -11,9 +11,9 @@ public partial class Visa
 
     public int ClientId { get; set; }
 
-    public DateOnly? DateStart { get; set; }
+    public string? DateStart { get; set; }
 
-    public DateOnly? DateEnd { get; set; }
+    public string? DateEnd { get; set; }
 
     public string? PlaceOfIssue { get; set; }
 

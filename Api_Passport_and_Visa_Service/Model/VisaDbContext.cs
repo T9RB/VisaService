@@ -572,9 +572,13 @@ public partial class VisaDbContext : DbContext
                 .UseIdentityAlwaysColumn()
                 .HasColumnName("id");
             entity.Property(e => e.ClientId).HasColumnName("client_id");
-            entity.Property(e => e.DateEnd).HasColumnName("date_end");
+            entity.Property(e => e.DateEnd)
+                .HasMaxLength(11)
+                .HasColumnName("date_end");
             entity.Property(e => e.DateOfIssue).HasColumnName("date_of_issue");
-            entity.Property(e => e.DateStart).HasColumnName("date_start");
+            entity.Property(e => e.DateStart)
+                .HasMaxLength(11)
+                .HasColumnName("date_start");
             entity.Property(e => e.Number).HasColumnName("number");
             entity.Property(e => e.PlaceOfIssue)
                 .HasMaxLength(100)

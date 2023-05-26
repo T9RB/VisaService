@@ -1,5 +1,9 @@
-﻿using System.Security.Cryptography;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 using Api_Passport_and_Visa_Service.Cryptografy;
 using Api_Passport_and_Visa_Service.ForRequest;
 using Api_Passport_and_Visa_Service.Model;
@@ -44,8 +48,32 @@ public class Service
          return clietnsListSorted;
      }
      
+     public async Task<ClientResponse> GetClient(int id)
+     {
+         var clients =  await _dbcontext.Clients.ToListAsync();
+         var passData = await _dbcontext.Passportdata.ToListAsync();
+         var reg = await _dbcontext.Registrations.ToListAsync();
+         
+         var client = clients.Select(x => new ClientResponse()
+         {
+             id = x.Id,
+             surname = x.Surname,
+             nameClient = x.NameClient,
+             middleName = x.MiddleName,
+             placeOfBirth = x.PlaceOfBirth,
+             nationaly = x.Nationaly,
+             Birthday = x.Birthday,
+             familyStatus = x.FamilyStatus,
+             Citizenship = x.Cituzenship,
+             PassportData = passData.Select(pd => new PassportDataResponse(){id = pd.Id, series = pd.Series ,number = pd.Number}).Where(c => c.id == x.PassportDataId).ToList(),
+             Registration = reg.Select(rg => new RegistrationResponse(){ID = rg.Id, City = rg.City, Street = rg.Street, House = rg.House, Flat = rg.Flat}).Where(r => r.ID == x.RegistrationId).ToList()
+         }).Where(q => q.id == id).ToList().First();
+
+         return client;
+     }
      
-     public async  Task<List<DepartureCountryResponse>> GetAllDeparture()
+     
+     /*public async  Task<List<DepartureCountryResponse>> GetAllDeparture()
      {
          var depart = _dbcontext.Departurecountries.ToList();
          var clients = await GetAllClients();
@@ -58,7 +86,7 @@ public class Service
          }).ToList();
      
          return depList;
-     }
+     }*/
      
      public async Task<List<InternationalPassportResponse>> GetAllPassportsInt()
      {
@@ -75,6 +103,25 @@ public class Service
              organization = x.Organization,
              clientResponse = clients.Where(c => c.id == x.ClientId).ToList()
          }).ToList();
+     
+         return passpList;
+     }
+     
+     public async Task<InternationalPassportResponse> GetPassportsInt(int id)
+     {
+         var passport = _dbcontext.Internationalpassports.Where(q => q.ClientId == id).ToList();
+         var clients = await GetAllClients();
+     
+         var passpList = passport.Select(x => new InternationalPassportResponse()
+         {
+             id = x.Id,
+             series = x.Series,
+             number = x.Number,
+             dateStart = x.DateStart,
+             dateEnd = x.DateStart,
+             organization = x.Organization,
+             clientResponse = clients.Where(c => c.id == x.ClientId).ToList()
+         }).ToList().First();
      
          return passpList;
      }
@@ -176,6 +223,25 @@ public class Service
             DateOfIssue = x.DateOfIssue,
             Client = clientsList.Where(c => c.id == x.ClientId).ToList()
          }).ToList();
+
+         return visaResponse;
+     }
+     
+     public async Task<VisaResponse> GetVisa(int id)
+     {
+         var visaList = await _dbcontext.Visas.Where(q => q.ClientId == id).ToListAsync();
+         var clientsList = await GetAllClients();
+
+         var visaResponse = visaList.Select(x => new VisaResponse()
+         {
+             Id = x.Id,
+             Number = x.Number,
+             DateStart = x.DateStart,
+             DateEnd = x.DateEnd,
+             PlaceOfIssue = x.PlaceOfIssue,
+             DateOfIssue = x.DateOfIssue,
+             Client = clientsList.Where(c => c.id == x.ClientId).ToList()
+         }).First();
 
          return visaResponse;
      }
@@ -283,11 +349,11 @@ public class Service
          return response;
      }
      
-     public async Task PostClient(ClientResponse clientResponse, int idAccount)
+     public async Task<int> PostClient(ClientResponse clientResponse, int idAccount)
      {
-         var series = clientResponse.PassportData.Select(x => x.series);
-         var number = clientResponse.PassportData.Select(x => x.number);
-         var checkPassportDataClient = await CheckPassportData(number.ToString(), series.ToString());
+         var series = clientResponse.PassportData.Select(x => x.series).First();
+         var number = clientResponse.PassportData.Select(x => x.number).First();
+         var checkPassportDataClient = await CheckPassportData(series.ToString(), number.ToString());
          if (checkPassportDataClient)
          {
              var newClient = new Client()
@@ -308,20 +374,41 @@ public class Service
              await _dbcontext.Clients.AddAsync(newClient);
              await _dbcontext.SaveChangesAsync();
              
+             //Теперь привязываем аккаунт к учетной записи клиента
+
+             var newAccount = new Usersaccount()
+             {
+                 Id = 0,
+                 Accountsid = idAccount,
+                 Clientid = newClient.Id
+             };
+
+             await _dbcontext.Usersaccounts.AddAsync(newAccount);
+             await _dbcontext.SaveChangesAsync();
              
+             return newClient.Id;
          }
-         
+
+         return 0;
      }
      
      public async Task PostRecord(RecordAppointmentRequest recordAppointmentRequests)
      {
+         var postsList = await _dbcontext.Recordappointments.ToListAsync();
+         
+         //Выбор рандомного сотрудника
+         Random random = new Random();
+         int randomIndex = random.Next(postsList.Count);
+         Recordappointment response = postsList[randomIndex];
+         //----------------------------
+         
          var newRecord = new Recordappointment()
          {
              Id = recordAppointmentRequests.id,
              DateAppointment = recordAppointmentRequests.dateAppointment,
              PurposeOfAdmission = recordAppointmentRequests.purposeOfAdmission,
              ClientId = recordAppointmentRequests.ClientId,
-             EmployeeId = recordAppointmentRequests.EmployeeId
+             EmployeeId = response.EmployeeId
          };
 
          await _dbcontext.Recordappointments.AddAsync(newRecord);
@@ -348,10 +435,12 @@ public class Service
 
      public async Task PostReqIntPassport(RecordIntPassportRequest recordIntPassportRequest)
      {
+         var rand = new Random();
+         var randomNumber = (short) rand.Next(100000, 999999);
          var newRecIntPassport = new Requestonintpassport()
          {
              Id = recordIntPassportRequest.Id,
-             Number = recordIntPassportRequest.Number,
+             Number = randomNumber,
              DateReq = DateOnly.Parse(recordIntPassportRequest.DateReq),
              ClientId = recordIntPassportRequest.ClientId
          };
@@ -363,10 +452,12 @@ public class Service
 
      public async Task PostReqVisa(ReqVisaRequest reqVisaRequest)
      {
+         var rand = new Random();
+         var randomNumber = (short) rand.Next(100000, 999999);
          var newRecVisa = new Requestonvisa()
          {
              Id = reqVisaRequest.Id,
-             Number = reqVisaRequest.Number,
+             Number = randomNumber,
              DateReq = DateOnly.Parse(reqVisaRequest.DateReq),
              ClientId = reqVisaRequest.ClientId,
              DepartureGoals = reqVisaRequest.DepartureGoals,
@@ -398,10 +489,12 @@ public class Service
 
      public async Task PostAnswerReqIntPassport(AnswerIntPasportRequest answerIntPasportRequest)
      {
+         var rand = new Random();
+         var randomNumber = (short) rand.Next(100000, 999999);
          var newAnswer = new Answertoreqpassport()
          {
              Id = answerIntPasportRequest.Id,
-             Number = answerIntPasportRequest.Number,
+             Number = randomNumber,
              ReqPassportId = answerIntPasportRequest.ReqPassportId,
              MessageToClient = answerIntPasportRequest.MessageToClient,
              ApplicationStatus = answerIntPasportRequest.ApplicationStatus,
@@ -644,13 +737,22 @@ public class Service
      {
          var hashPassword = await HashPassword(password);
          var findUser = await _dbcontext.Usersdata.FirstOrDefaultAsync(x => x.Login == login && x.Password == hashPassword);
-         
+         var findUserBundle = await _dbcontext.Usersaccounts.FirstOrDefaultAsync(x => x.Accountsid == findUser.Id);
 
 
-         if (findUser != null || findUser != default)
+         if (findUser != null && findUserBundle == null)
          {
              string status = "Success";
              AuthorizationResponse authorizationResponse = new AuthorizationResponse(){dateAuthorization = DateTime.Today, status = status, access = true, accountID = findUser.Id};
+             var session = new Authorizationsession() { Dateauthorization = DateTime.Today.ToString(), Status = status, Access = true, Accountsid = findUser.Id};
+             await _dbcontext.Authorizationsessions.AddAsync(session);
+             await _dbcontext.SaveChangesAsync();
+             return authorizationResponse;
+         }
+         if(findUserBundle != null && findUser != null)
+         {
+             string status = "Success";
+             AuthorizationResponse authorizationResponse = new AuthorizationResponse(){dateAuthorization = DateTime.Today, status = status, access = true, accountID = findUser.Id, clientID = findUserBundle.Clientid};
              var session = new Authorizationsession() { Dateauthorization = DateTime.Today.ToString(), Status = status, Access = true, Accountsid = findUser.Id};
              await _dbcontext.Authorizationsessions.AddAsync(session);
              await _dbcontext.SaveChangesAsync();
@@ -663,7 +765,7 @@ public class Service
              return authorizationResponse;
          }
      }
-     
+    
      public async Task PostUser(string login, string password)
      {
          string hashPassword = await HashPassword(password);
@@ -678,13 +780,13 @@ public class Service
          await _dbcontext.Usersdata.AddAsync(newUser);
          await _dbcontext.SaveChangesAsync();
          
-         var findUser = _dbcontext.Usersdata.FirstOrDefaultAsync(x => x.Login == login && x.Password == hashPassword);
+         /*var findUser = _dbcontext.Usersdata.FirstOrDefaultAsync(x => x.Login == login && x.Password == hashPassword);
          if (findUser != null || findUser != default)
          {
              var session = new Authorizationsession() { Dateauthorization = DateTime.Today.ToString(), Status = status, Access = true, Accountsid = findUser.Id};
              await _dbcontext.Authorizationsessions.AddAsync(session);
              await _dbcontext.SaveChangesAsync();
-         }
+         }*/
      }
      public async Task<string> HashPassword(string password)
      {

@@ -1,7 +1,13 @@
+using System;
+using System.Collections.Generic;
 using Api_Passport_and_Visa_Service;
 using Api_Passport_and_Visa_Service.Authentication;
 using Api_Passport_and_Visa_Service.Service;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
 var  myAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -12,7 +18,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: myAllowSpecificOrigins,
         policy  =>
         {
-            policy.WithOrigins("http://localhost:63343").AllowAnyHeader()
+            policy.WithOrigins("http://localhost:63342").AllowAnyHeader()
                 .AllowAnyMethod();
         });
 });
