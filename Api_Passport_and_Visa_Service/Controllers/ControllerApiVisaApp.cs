@@ -108,19 +108,20 @@ public class ControllerApiVisaApp : ControllerBase
         }
     }
     
-    /*[HttpGet]
-    [Route("departure-country")]
-    public async Task<ActionResult<List<DepartureCountryResponse>>> GetAllDepCountries()
+    [HttpGet]
+    [Route("records-appointment-client/id={id:int}")]
+    public async Task<ActionResult<List<RecordAppointmentResponse>>> GetRecordsForClient(int id)
     {
         try
         {
-            return await _service.GetAllDeparture();
+            return await _service.GetRecordAppointmentResponses(id);
         }
         catch (Exception e)
         {
             return StatusCode(500);
         }
-    }*/
+    }
+    
     
     [HttpGet]
     [Route("payments")]
@@ -180,6 +181,21 @@ public class ControllerApiVisaApp : ControllerBase
     }
     
     [HttpGet]
+    [Route("req-visa/id={id:int}")]
+    public async Task<ActionResult<ReqVisaResponse>> GetReqVisa(int id)
+    {
+        try
+        {
+            return await _service.GetReqVisa(id);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500);
+        }
+        
+    }
+    
+    [HttpGet]
     [Route("req-int-passport")]
     public async Task<ActionResult<List<ReqIntPassportResponse>>> GetAllReqIntPassport()
     {
@@ -195,12 +211,42 @@ public class ControllerApiVisaApp : ControllerBase
     }
     
     [HttpGet]
+    [Route("req-int-passport/id={id:int}")]
+    public async Task<ActionResult<ReqIntPassportResponse>> GetReqIntPassport(int id)
+    {
+        try
+        {
+            return await _service.GetReqIntPassport(id);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500);
+        }
+        
+    }
+    
+    [HttpGet]
     [Route("rec-answ")]
     public async Task<ActionResult<List<AnswRecordResponse>>> GetAllAnswersOnRecord()
     {
         try
         {
             return await _service.GetAllAnswerRec();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500);
+        }
+        
+    }
+    
+    [HttpGet]
+    [Route("rec-answ/id={id:int}")]
+    public async Task<ActionResult<AnswRecordResponse>> GetAnswersOnRecord(int id)
+    {
+        try
+        {
+            return await _service.GetAnswerRec(id);
         }
         catch (Exception e)
         {
@@ -239,12 +285,42 @@ public class ControllerApiVisaApp : ControllerBase
     }
     
     [HttpGet]
+    [Route("passport-answ/id={id:int}")]
+    public async Task<ActionResult<AnswRecPassport>> GetAnswersOnRecPassport(int id)
+    {
+        try
+        {
+            return await _service.GetAnswerPassport(id);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500);
+        }
+        
+    }
+    
+    [HttpGet]
     [Route("visa-answ")]
     public async Task<ActionResult<List<AnswRecVisa>>> GetAllAnswersOnRecVisa()
     {
         try
         {
             return await _service.GetAllAnswerVisa();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500);
+        }
+        
+    }
+    
+    [HttpGet]
+    [Route("visa-answ/id={id:int}")]
+    public async Task<ActionResult<AnswRecVisa>> GetAnswersOnRecVisa(int id)
+    {
+        try
+        {
+            return await _service.GetAnswerVisa(id);
         }
         catch (Exception e)
         {

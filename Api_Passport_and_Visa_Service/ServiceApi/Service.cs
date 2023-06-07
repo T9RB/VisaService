@@ -73,21 +73,6 @@ public class Service
      }
      
      
-     /*public async  Task<List<DepartureCountryResponse>> GetAllDeparture()
-     {
-         var depart = _dbcontext.Departurecountries.ToList();
-         var clients = await GetAllClients();
-     
-         var depList = depart.Select(x => new DepartureCountryResponse()
-         {
-             id = x.Id,
-             dateDeparture = x.DateDeparture,
-             client = clients.Where(c => c.id == x.ClientId).ToList()
-         }).ToList();
-     
-         return depList;
-     }*/
-     
      public async Task<List<InternationalPassportResponse>> GetAllPassportsInt()
      {
          var passport = _dbcontext.Internationalpassports.ToList();
@@ -192,6 +177,37 @@ public class Service
          return recordsList;
      }
 
+     public async Task<List<RecordAppointmentResponse>> GetRecordAppointmentResponses(int id)
+     {
+         var records = await _dbcontext.Recordappointments.Where(q => q.ClientId == id).ToListAsync();
+         var employee = await _dbcontext.Employees.ToListAsync();
+         var clients = await GetAllClients();
+         var post = await GetAllPosts();
+
+         var recordsList = records.Select(x => new RecordAppointmentResponse()
+         {
+             id = x.Id,
+             dateAppointment = x.DateAppointment,
+             purposeOfAdmission = x.PurposeOfAdmission,
+             client = clients.Where(c => c.id == x.ClientId).ToList(),
+             employee = employee.
+                 Select(r => new EmployeeResponse()
+                 {
+                     Id = r.Id, 
+                     Surname = r.Surname, 
+                     NameEmp = r.NameEmp, 
+                     MiddleName = r.MiddleName, 
+                     Birthday = r.Birthday, 
+                     Gender = r.Gender, 
+                     QualificationLevel = r.QualificationLevel, 
+                     Post = post.Where(j => j.Id == r.PostId).ToList()
+                        
+                 }).Where(k => k.Id == x.EmployeeId).ToList()
+         }).ToList();
+
+         return recordsList;
+     }
+     
      public async Task<List<PaymentForResponse>> GetAllPayments()
      {
          var paymentsList = await _dbcontext.Paymentinvoices.ToListAsync();
@@ -253,14 +269,33 @@ public class Service
 
          var response = reqVisaList.Select(x => new ReqVisaResponse()
          {
-            Id = x.Id,
-            Number = x.Number,
-            DateReq = x.DateReq,
-            DepartureGoals = x.DepartureGoals,
-            ReturnDate = x.ReturnDate,
-            Country = x.Country,
-            client = clientsList.Where(c => c.id == x.ClientId).ToList()
+             Id = x.Id,
+             Number = x.Number,
+             DateReq = x.DateReq,
+             DepartureGoals = x.DepartureGoals,
+             ReturnDate = x.ReturnDate,
+             Country = x.Country,
+             client = clientsList.Where(c => c.id == x.ClientId).ToList()
          }).ToList();
+
+         return response;
+     }
+     
+     public async Task<ReqVisaResponse> GetReqVisa(int id)
+     {
+         var reqVisaList = await _dbcontext.Requestonvisas.Include(x => x.Client).Where(q => q.ClientId == id).ToListAsync();
+         var clientsList = await GetAllClients();
+
+         var response = reqVisaList.Select(x => new ReqVisaResponse()
+         {
+             Id = x.Id,
+             Number = x.Number,
+             DateReq = x.DateReq,
+             DepartureGoals = x.DepartureGoals,
+             ReturnDate = x.ReturnDate,
+             Country = x.Country,
+             client = clientsList.Where(c => c.id == x.ClientId).ToList()
+         }).First();
 
          return response;
      }
@@ -283,6 +318,24 @@ public class Service
          return response;
      }
      
+     public async Task<AnswRecordResponse> GetAnswerRec(int id)
+     {
+         var listAnsw = await _dbcontext.Answertorecords.Where(q => q.Records.ClientId == id).ToListAsync();
+         var recordList = await GetAllRecordAppointmentResponses();
+
+         var response = listAnsw.Select(x => new AnswRecordResponse()
+         {
+             Id = x.Id,
+             Number = x.Number,
+             MessageToClient = x.MessageToClient,
+             ApplicationStatus = x.ApplicationStatus,
+             DateAnswer = x.DateAnswer,
+             Record = recordList.Where(c => c.id == x.RecordsId).ToList()
+         }).First();
+
+         return response;
+     }
+     
      public async Task<List<AnswRecPassport>> GetAllAnswerPassport()
      {
          var listAnsw = await _dbcontext.Answertoreqpassports.ToListAsync();
@@ -300,6 +353,25 @@ public class Service
 
          return response;
      }
+     
+     public async Task<AnswRecPassport> GetAnswerPassport(int id)
+     {
+         var listAnsw = await _dbcontext.Answertoreqpassports.Where(q => q.ReqPassport.ClientId == id).ToListAsync();
+         var recordList = await GetAllReqIntPassport();
+
+         var response = listAnsw.Select(x => new AnswRecPassport()
+         {
+             Id = x.Id,
+             Number = x.Number,
+             MessageToClient = x.MessageToClient,
+             ApplicationStatus = x.ApplicationStatus,
+             DateAnswer = x.DateAnswer,
+             Record = recordList.Where(c => c.Id == x.ReqPassportId).ToList()
+         }).First();
+
+         return response;
+     }
+     
      
      public async Task<List<AnswRecVisa>> GetAllAnswerVisa()
      {
@@ -319,6 +391,24 @@ public class Service
          return response;
      }
 
+     public async Task<AnswRecVisa> GetAnswerVisa(int id)
+     {
+         var listAnsw = await _dbcontext.Answertoreqvisas.Where(q => q.ReqVisa.ClientId == id).ToListAsync();
+         var recordList = await GetAllReqVisa();
+
+         var response = listAnsw.Select(x => new AnswRecVisa()
+         {
+             Id = x.Id,
+             Number = x.Number,
+             MessageToClient = x.MessageToClient,
+             ApplicationStatus = x.ApplicationStatus,
+             DateAnswer = x.DateAnswer,
+             Record = recordList.Where(c => c.Id == x.ReqVisaId).ToList()
+         }).First();
+
+         return response;
+     }
+     
      public async Task<List<ReqIntPassportResponse>> GetAllReqIntPassport()
      {
          var reqIntPassportsList = await _dbcontext.Requestonintpassports.Include(x => x.Client).ToListAsync();
@@ -331,6 +421,22 @@ public class Service
              DateReq = x.DateReq,
              Client = clientsList.Where(c => c.id == x.ClientId).ToList()
          }).ToList();
+
+         return response;
+     }
+     
+     public async Task<ReqIntPassportResponse> GetReqIntPassport(int id)
+     {
+         var reqIntPassportsList = await _dbcontext.Requestonintpassports.Include(x => x.Client).Where(q => q.ClientId == id).ToListAsync();
+         var clientsList = await GetAllClients();
+
+         var response = reqIntPassportsList.Select(x => new ReqIntPassportResponse()
+         {
+             Id = x.Id,
+             Number = x.Number,
+             DateReq = x.DateReq,
+             Client = clientsList.Where(c => c.id == x.ClientId).ToList()
+         }).First();
 
          return response;
      }
